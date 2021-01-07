@@ -262,7 +262,7 @@ bool MainWindow::on_key_press_event(GdkEventKey* event)
 
 int main(int argc, char *argv[])
 {
-  auto app = Gtk::Application::create(argc, argv, "org.gtkmm.physics-emulator");
+  auto app = Gtk::Application::create(argc, argv, "org.gtkmm.physics-simulator");
 
   MainWindow window;
 
