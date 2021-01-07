@@ -4,6 +4,15 @@
 
 #include <gtkmm/drawingarea.h>
 
+#include <optional>
+#include <numeric>
+
+struct Coordinates
+{
+    Coordinates(int x_, int y_) : x(x_), y(y_) {}
+    int x;
+    int y;
+};
 
 class Charges
 {
@@ -20,45 +29,61 @@ public:
         int value;
     };
 
+    enum class ChargeType
+    {
+        Negative = 0,
+        Positive = 1
+    };
+
+
     using Data = std::vector<Charge>;
     using Iter = Data::iterator;
     using ConstIter = Data::const_iterator;
 
     template <typename... Ts>
-    void emplace_back(Ts&&... args)
+    void emplaceBackPositiveCharge(Ts&&... args)
     {
-        _charges.emplace_back(std::forward<Ts>(args)...);
+        _positiveCharges.emplace_back(std::forward<Ts>(args)...);
     }
 
-    ConstIter begin() const { return _charges.cbegin(); }
-    ConstIter end() const { return _charges.cend(); }
-    Iter begin() { return _charges.begin(); }
-    Iter end() { return _charges.end(); };
+    template <typename... Ts>
+    void emplaceBackNegativeCharge(Ts&&... args)
+    {
+        _negativeCharges.emplace_back(std::forward<Ts>(args)...);
+    }
 
-    void clear() { _charges.clear(); }
+    void clear()
+    {
+        _positiveCharges.clear();
+        _negativeCharges.clear();
+    }
 
     double getEx(int x, int y) const
     {
-        double Ex = 0.0;
-        for (const auto& charge : _charges)
+        auto sumEx = [x, y](double Ex, const Charge& charge) -> double
         {
             int dx = x - charge.x;
             int dy = y - charge.y;
-            Ex += charge.value * dx / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
-        }
-        return Ex;
+            return Ex + charge.value * dx / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
+        };
+
+        return
+          std::accumulate(_positiveCharges.cbegin(), _positiveCharges.cend(), 0.0, sumEx) +
+          std::accumulate(_negativeCharges.cbegin(), _negativeCharges.cend(), 0.0, sumEx);
     }
 
     double getEy(int x, int y) const
     {
-        double Ey = 0.0;
-        for (const auto& charge : _charges)
+        auto sumEy = [x, y](double Ey, const Charge& charge) -> double
         {
             int dx = x - charge.x;
             int dy = y - charge.y;
-            Ey += charge.value * dy / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
-        }
-        return Ey;
+            return Ey + charge.value * dy / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
+        };
+
+        return
+          std::accumulate(_positiveCharges.cbegin(), _positiveCharges.cend(), 0.0, sumEy) +
+          std::accumulate(_negativeCharges.cbegin(), _negativeCharges.cend(), 0.0, sumEy);
     }
 
     double getE(int x, int y) const
@@ -76,25 +101,53 @@ public:
         return getEy(x, y) / getE(x, y);
     }
 
-    bool nearNegatives(int x, int y) const
+    std::optional<Coordinates> isComeToNegative(int x, int y) const
     {
-        const int d = 100;
-        for (const auto& charge : _charges)
-        {
-            if (charge.value < 0)
-            {
-                if (pow(charge.x - x, 2.0) + pow(charge.y - y, 2.0) < d)
-                {
-                  return true;
-                }
-            }
-        }
-        return false;
+        return isNear(x, y, ChargeType::Negative);
     }
 
-private:
+    std::optional<Coordinates> isComeToPositive(int x, int y) const
+    {
+        return isNear(x, y, ChargeType::Positive);
+    }
 
-    Data _charges;
+    const Data& getPositiveCharges() const { return _positiveCharges; }
+    const Data& getNegativeCharges() const { return _negativeCharges; }
+
+private:
+    std::optional<Coordinates> isNear(int x, int y, ChargeType type) const
+    {
+        auto pred = [x, y](const Charge& charge)
+        {
+            const double delta = 100;
+            return pow(charge.x - x, 2.0) + pow(charge.y - y, 2.0) < delta;
+        };
+        switch (type)
+        {
+            case ChargeType::Negative:
+            {
+                auto it = std::find_if(_negativeCharges.cbegin(), _negativeCharges.cend(), pred);
+                if (it != _negativeCharges.cend())
+                {
+                    return Coordinates(it->x, it->y);
+                }
+                break;
+            }
+            case ChargeType::Positive:
+            {
+                auto it = std::find_if(_positiveCharges.cbegin(), _positiveCharges.cend(), pred);
+                if (it != _positiveCharges.cend())
+                {
+                    return Coordinates(it->x, it->y);
+                }
+                break;
+            }
+      }
+      return {};
+    }
+
+    Data _positiveCharges;
+    Data _negativeCharges;
 };
 
 class Canvas : public Gtk::DrawingArea
@@ -132,55 +185,96 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->paint();
     cr->restore();
 
-    // draw charges
-    Gdk::RGBA positive_charge_color("#ff0000");
-    Gdk::RGBA negative_charge_color("#0000ff");
-    cr->save();
-    for (const auto& charge : _charges)
-    {
-        if (charge.value > 0)
-        {
-            Gdk::Cairo::set_source_rgba(cr, positive_charge_color);
-        }
-        else
-        {
-            Gdk::Cairo::set_source_rgba(cr, negative_charge_color);
-        }
-        cr->arc(charge.x, charge.y, 10.0f, 0.0f, 2 * M_PI);
-        cr->fill();
-    }
-    cr->restore();
-
+    // draw lines
     cr->save();
     Gdk::RGBA lines_color("#872323");
     cr->set_line_width(5.0);
+
+    const size_t lines_count = 8;
+
+    const auto& posCharges = _charges.getPositiveCharges();
+    const auto& negCharges = _charges.getNegativeCharges();
+
     if (_draw_lines)
     {
         const double dl = 10.0;
-        for (const auto& charge : _charges)
+        for (const auto& charge : posCharges)
         {
-            if (charge.value <= 0)
+            for (size_t i = 0; i < lines_count; ++i)
             {
-                continue;
-            }
-            for (size_t i = 0; i < 8; ++i)
-            {
-                double x = charge.x + cos(i * M_PI / 4) * dl;
-                double y = charge.y + sin(i * M_PI / 4) * dl;
-                cr->move_to(x, y);
-                for (size_t j = 0; x < width && x > 0 && y < height && y > 0 && !_charges.nearNegatives(x, y) && j < 100; ++j)
+                cr->move_to(charge.x, charge.y);
+                double x = charge.x + cos(i * 2 * M_PI / lines_count) * dl;
+                double y = charge.y + sin(i * 2 * M_PI / lines_count) * dl;
+                for (size_t j = 0; x < width && x > 0 && y < height && y > 0 && j < 1000; ++j)
                 {
-                    x += _charges.getCos(x, y) * dl;
-                    y += _charges.getSin(x, y) * dl;
-                    if (x < width && x > 0 && y < height && y > 0)
+                    auto end = _charges.isComeToNegative(x, y);
+                    if (end)
                     {
-                        cr->line_to(x,y);
+                        cr->line_to(end->x, end->y);
+                        break;
                     }
+                    cr->line_to(x,y);
+                    double dx = _charges.getCos(x, y) * dl;
+                    double dy = _charges.getSin(x, y) * dl;
+                    if (fabs(dx) < 1.0 && fabs(dy) < 1.0)
+                    {
+                      break;
+                    }
+                    x += dx;
+                    y += dy;
+                }
+                cr->stroke();
+            }
+        }
+
+        for (const auto& charge : negCharges)
+        {
+            for (size_t i = 0; i < lines_count; ++i)
+            {
+                cr->move_to(charge.x, charge.y);
+                double x = charge.x + cos(i * 2 * M_PI / lines_count) * dl;
+                double y = charge.y + sin(i * 2 * M_PI / lines_count) * dl;
+                for (size_t j = 0; x < width && x > 0 && y < height && y > 0 && j < 1000; ++j)
+                {
+                    auto end = _charges.isComeToPositive(x, y);
+                    if (end)
+                    {
+                        cr->line_to(end->x, end->y);
+                        break;
+                    }
+                    cr->line_to(x,y);
+                    double dx = _charges.getCos(x, y) * dl;
+                    double dy = _charges.getSin(x, y) * dl;
+                    if (fabs(dx) < 1.0 && fabs(dy) < 1.0)
+                    {
+                      break;
+                    }
+                    x -= dx;
+                    y -= dy;
                 }
                 cr->stroke();
             }
         }
     }
+    cr->restore();
+
+    // draw charges
+    cr->save();
+
+    auto drawArc = [&cr](const Charges::Charge& charge)
+    {
+        cr->arc(charge.x, charge.y, 10.0f, 0.0f, 2 * M_PI);
+        cr->fill();
+    };
+
+    Gdk::RGBA positive_charge_color("#ff0000");
+    Gdk::Cairo::set_source_rgba(cr, positive_charge_color);
+    std::for_each(posCharges.cbegin(), posCharges.cend(), drawArc);
+
+    Gdk::RGBA negative_charge_color("#0000ff");
+    Gdk::Cairo::set_source_rgba(cr, negative_charge_color);
+    std::for_each(negCharges.cbegin(), negCharges.cend(), drawArc);
+
     cr->restore();
 
     return true;
@@ -192,12 +286,12 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
     {
         if (event->button == 1)
         {
-            _charges.emplace_back(event->x, event->y, 1);
+            _charges.emplaceBackPositiveCharge(event->x, event->y, 1);
             queue_draw();
         }
         else if (event->button == 3)
         {
-            _charges.emplace_back(event->x, event->y, -1);
+            _charges.emplaceBackNegativeCharge(event->x, event->y, -1);
             queue_draw();
         }
     }
