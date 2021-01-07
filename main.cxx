@@ -235,7 +235,7 @@ private:
 
 MainWindow::MainWindow()
 {
-    set_title("Physic Emulator");
+    set_title("Electrodynamics Simulator");
     set_size_request(200, 200);
     set_border_width(10);
 
@@ -262,7 +262,7 @@ bool MainWindow::on_key_press_event(GdkEventKey* event)
 
 int main(int argc, char *argv[])
 {
-  auto app = Gtk::Application::create(argc, argv, "org.gtkmm.physics-simulator");
+  auto app = Gtk::Application::create(argc, argv, "org.gtkmm.electrodynamics-simulator");
 
   MainWindow window;
 
