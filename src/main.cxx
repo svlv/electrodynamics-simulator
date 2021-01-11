@@ -4,151 +4,8 @@
 
 #include <gtkmm/drawingarea.h>
 
-#include <optional>
-#include <numeric>
-
-struct Coordinates
-{
-    Coordinates(int x_, int y_) : x(x_), y(y_) {}
-    int x;
-    int y;
-};
-
-class Charges
-{
-public:
-
-    struct Charge
-    {
-        Charge(int x_, int y_, int value_)
-          : x(x_)
-          , y(y_)
-          , value(value_) {}
-        int x;
-        int y;
-        int value;
-    };
-
-    enum class ChargeType
-    {
-        Negative = 0,
-        Positive = 1
-    };
-
-
-    using Data = std::vector<Charge>;
-    using Iter = Data::iterator;
-    using ConstIter = Data::const_iterator;
-
-    template <typename... Ts>
-    void emplaceBackPositiveCharge(Ts&&... args)
-    {
-        _positiveCharges.emplace_back(std::forward<Ts>(args)...);
-    }
-
-    template <typename... Ts>
-    void emplaceBackNegativeCharge(Ts&&... args)
-    {
-        _negativeCharges.emplace_back(std::forward<Ts>(args)...);
-    }
-
-    void clear()
-    {
-        _positiveCharges.clear();
-        _negativeCharges.clear();
-    }
-
-    double getEx(int x, int y) const
-    {
-        auto sumEx = [x, y](double Ex, const Charge& charge) -> double
-        {
-            int dx = x - charge.x;
-            int dy = y - charge.y;
-            return Ex + charge.value * dx / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
-        };
-
-        return
-          std::accumulate(_positiveCharges.cbegin(), _positiveCharges.cend(), 0.0, sumEx) +
-          std::accumulate(_negativeCharges.cbegin(), _negativeCharges.cend(), 0.0, sumEx);
-    }
-
-    double getEy(int x, int y) const
-    {
-        auto sumEy = [x, y](double Ey, const Charge& charge) -> double
-        {
-            int dx = x - charge.x;
-            int dy = y - charge.y;
-            return Ey + charge.value * dy / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
-        };
-
-        return
-          std::accumulate(_positiveCharges.cbegin(), _positiveCharges.cend(), 0.0, sumEy) +
-          std::accumulate(_negativeCharges.cbegin(), _negativeCharges.cend(), 0.0, sumEy);
-    }
-
-    double getE(int x, int y) const
-    {
-        return pow(pow(getEx(x, y), 2.0) + pow(getEy(x, y), 2.0), 0.5);
-    }
-
-    double getCos(int x, int y) const
-    {
-        return getEx(x, y) / getE(x, y);
-    }
-
-    double getSin(int x, int y) const
-    {
-        return getEy(x, y) / getE(x, y);
-    }
-
-    std::optional<Coordinates> isComeToNegative(int x, int y) const
-    {
-        return isNear(x, y, ChargeType::Negative);
-    }
-
-    std::optional<Coordinates> isComeToPositive(int x, int y) const
-    {
-        return isNear(x, y, ChargeType::Positive);
-    }
-
-    const Data& getPositiveCharges() const { return _positiveCharges; }
-    const Data& getNegativeCharges() const { return _negativeCharges; }
-
-private:
-    std::optional<Coordinates> isNear(int x, int y, ChargeType type) const
-    {
-        auto pred = [x, y](const Charge& charge)
-        {
-            const double delta = 100;
-            return pow(charge.x - x, 2.0) + pow(charge.y - y, 2.0) < delta;
-        };
-        switch (type)
-        {
-            case ChargeType::Negative:
-            {
-                auto it = std::find_if(_negativeCharges.cbegin(), _negativeCharges.cend(), pred);
-                if (it != _negativeCharges.cend())
-                {
-                    return Coordinates(it->x, it->y);
-                }
-                break;
-            }
-            case ChargeType::Positive:
-            {
-                auto it = std::find_if(_positiveCharges.cbegin(), _positiveCharges.cend(), pred);
-                if (it != _positiveCharges.cend())
-                {
-                    return Coordinates(it->x, it->y);
-                }
-                break;
-            }
-      }
-      return {};
-    }
-
-    Data _positiveCharges;
-    Data _negativeCharges;
-};
+#include "Charge.hxx"
+using namespace maxwell;
 
 class Canvas : public Gtk::DrawingArea
 {
@@ -202,20 +59,21 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         {
             for (size_t i = 0; i < lines_count; ++i)
             {
-                cr->move_to(charge.x, charge.y);
-                double x = charge.x + cos(i * 2 * M_PI / lines_count) * dl;
-                double y = charge.y + sin(i * 2 * M_PI / lines_count) * dl;
+                cr->move_to(charge.coordinates.x, charge.coordinates.y);
+                double x = charge.coordinates.x + cos(i * 2 * M_PI / lines_count) * dl;
+                double y = charge.coordinates.y + sin(i * 2 * M_PI / lines_count) * dl;
                 for (size_t j = 0; x < width && x > 0 && y < height && y > 0 && j < 1000; ++j)
                 {
-                    auto end = _charges.isComeToNegative(x, y);
+                    auto coordinates = Coordinates(x, y);
+                    auto end = _charges.isComeToNegative(coordinates);
                     if (end)
                     {
                         cr->line_to(end->x, end->y);
                         break;
                     }
                     cr->line_to(x,y);
-                    double dx = _charges.getCos(x, y) * dl;
-                    double dy = _charges.getSin(x, y) * dl;
+                    double dx = _charges.getCos(coordinates) * dl;
+                    double dy = _charges.getSin(coordinates) * dl;
                     if (fabs(dx) < 1.0 && fabs(dy) < 1.0)
                     {
                       break;
@@ -231,20 +89,21 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         {
             for (size_t i = 0; i < lines_count; ++i)
             {
-                cr->move_to(charge.x, charge.y);
-                double x = charge.x + cos(i * 2 * M_PI / lines_count) * dl;
-                double y = charge.y + sin(i * 2 * M_PI / lines_count) * dl;
+                cr->move_to(charge.coordinates.x, charge.coordinates.y);
+                double x = charge.coordinates.x + cos(i * 2 * M_PI / lines_count) * dl;
+                double y = charge.coordinates.y + sin(i * 2 * M_PI / lines_count) * dl;
                 for (size_t j = 0; x < width && x > 0 && y < height && y > 0 && j < 1000; ++j)
                 {
-                    auto end = _charges.isComeToPositive(x, y);
+                    auto coordinates = Coordinates(x, y);
+                    auto end = _charges.isComeToPositive(Coordinates(x, y));
                     if (end)
                     {
                         cr->line_to(end->x, end->y);
                         break;
                     }
                     cr->line_to(x,y);
-                    double dx = _charges.getCos(x, y) * dl;
-                    double dy = _charges.getSin(x, y) * dl;
+                    double dx = _charges.getCos(coordinates) * dl;
+                    double dy = _charges.getSin(coordinates) * dl;
                     if (fabs(dx) < 1.0 && fabs(dy) < 1.0)
                     {
                       break;
@@ -261,9 +120,9 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     // draw charges
     cr->save();
 
-    auto drawArc = [&cr](const Charges::Charge& charge)
+    auto drawArc = [&cr](const Charge& charge)
     {
-        cr->arc(charge.x, charge.y, 10.0f, 0.0f, 2 * M_PI);
+        cr->arc(charge.coordinates.x, charge.coordinates.y, 10.0f, 0.0f, 2 * M_PI);
         cr->fill();
     };
 
@@ -362,4 +221,3 @@ int main(int argc, char *argv[])
 
   return app->run(window);
 }
-
