@@ -15,8 +15,8 @@ double Charges::getEx(const Coordinates& coordinates) const
 {
     auto sumEx = [&coordinates](double Ex, const Charge& charge) -> double
     {
-        int dx = coordinates.x - charge.coordinates.x;
-        int dy = coordinates.y - charge.coordinates.y;
+        double dx = coordinates.x - charge.coordinates.x;
+        double dy = coordinates.y - charge.coordinates.y;
         return Ex + charge.value * dx / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
     };
 
@@ -29,8 +29,8 @@ double Charges::getEy(const Coordinates& coordinates) const
 {
     auto sumEy = [&coordinates](double Ey, const Charge& charge) -> double
     {
-        int dx = coordinates.x - charge.coordinates.x;
-        int dy = coordinates.y - charge.coordinates.y;
+        double dx = coordinates.x - charge.coordinates.x;
+        double dy = coordinates.y - charge.coordinates.y;
         return Ey + charge.value * dy / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
     };
 
@@ -76,7 +76,7 @@ const Charges::Data& Charges::getNegativeCharges() const
 
 std::optional<Coordinates> Charges::isNear(const Coordinates& coordinates, ChargeType type) const
 {
-    auto pred = [&coordinates](const Charge& charge)
+    const auto pred = [&coordinates](const Charge& charge)
     {
         const double delta = 100;
         return pow(charge.coordinates.x - coordinates.x, 2.0) + pow(charge.coordinates.y - coordinates.y, 2.0) < delta;
