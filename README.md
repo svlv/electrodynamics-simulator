@@ -1,2 +1,2 @@
-# electrodynamics-simulator
-Simple graphic electrodynamics simulator written on C++
+# Electric field simulator
+Simple graphic electric field simulator written on C++ using GTK+.
