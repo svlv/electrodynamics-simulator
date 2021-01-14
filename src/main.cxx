@@ -42,6 +42,11 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->paint();
     cr->restore();
 
+    // draw arrow for test
+    cr->save();
+    draw_arrow(cr, Coordinates(width / 2.0, height / 2.0));
+    cr->restore();
+
     // draw lines
     cr->save();
     Gdk::RGBA lines_color("#872323");

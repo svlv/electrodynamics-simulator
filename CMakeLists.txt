@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(maxwell)
+project(electric-field)
 
 find_package(PkgConfig)
 pkg_check_modules(GTKMM gtkmm-3.0)
@@ -13,6 +13,6 @@ include_directories(${GTKMM_INCLUDE_DIRS})
 
 file(GLOB SRC "src/*.cxx")
 
-add_executable(physics-emulator ${SRC})
+add_executable(${PROJECT_NAME} ${SRC})
 
-target_link_libraries(physics-emulator ${GTKMM_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${GTKMM_LIBRARIES})

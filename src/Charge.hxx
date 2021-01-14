@@ -2,7 +2,6 @@
 
 #include "Utils.hxx"
 #include <vector>
-#include <numeric>
 #include <optional>
 
 namespace maxwell

@@ -1,6 +1,8 @@
 #include "Charge.hxx"
-#include <cmath>
+
 #include <algorithm>
+#include <cmath>
+#include <numeric>
 
 namespace maxwell
 {
