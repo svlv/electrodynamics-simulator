@@ -43,8 +43,8 @@ void draw_arrow(const Cairo::RefPtr<Cairo::Context>& cr,
 
 void rotate(Coordinates& coord, float sin_, float cos_)
 {
-    const auto x_ =  cos_ * coord.x + sin_ * coord.y;
-    const auto y_ = -1 * sin_ * coord.x + cos_ * coord.y;
+    const auto x_ =  cos_ * coord.x - sin_ * coord.y;
+    const auto y_ =  sin_ * coord.x + cos_ * coord.y;
     coord.x = x_;
     coord.y = y_;
 }
