@@ -18,7 +18,7 @@ protected:
     bool on_key_press_event(GdkEventKey* event) override;
 private:
     Charges _charges;
-    bool _draw_lines = true;
+    bool _draw_lines = false;
 };
 
 } // namespace maxwell

@@ -25,10 +25,8 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->paint();
     cr->restore();
 
-    // draw arrow for test
-    //cr->save();
-    //draw_arrow(cr, Coordinates(width / 2.0, height / 2.0));
-    //cr->restore();
+    //cr->arc(width / 2.0, height / 2.0, 2.0f, 0.0f, 2 * M_PI);
+    //cr->fill();
 
     // draw lines
     cr->save();
@@ -39,6 +37,29 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     const auto& posCharges = _charges.getPositiveCharges();
     const auto& negCharges = _charges.getNegativeCharges();
+
+    if (!_charges.empty())
+    {
+        double cur_x = 25;
+        double cur_y = 25;
+        double delta = 50;
+
+        cr->save();
+
+        while (cur_x + delta / 2.0 < width)
+        {
+            while (cur_y + delta / 2.0 < height)
+            {
+                auto coordinates = Coordinates(cur_x, cur_y);
+                draw_arrow(cr, coordinates, _charges.getSin(coordinates), _charges.getCos(coordinates));
+                cur_y += delta;
+            }
+            cur_x += delta;
+            cur_y = 25;
+        }
+
+        cr->restore();
+    }
 
     if (_draw_lines)
     {

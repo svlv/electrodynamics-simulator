@@ -36,6 +36,8 @@ struct ArrowSize
 static const ArrowSize DefaultArrowSize = {20.0, 28.0, 10.0, 20.0};
 
 void draw_arrow(const Cairo::RefPtr<Cairo::Context>& cr,
-                Coordinates coord, const ArrowSize& size = DefaultArrowSize);
+                Coordinates coord, float sin_, float cos_, const ArrowSize& size = DefaultArrowSize);
+
+void rotate(Coordinates& coord, float sin_, float cos_);
 
 } // namespace maxwell

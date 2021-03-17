@@ -22,7 +22,7 @@ MainWindow::MainWindow()
 
 bool MainWindow::on_key_press_event(GdkEventKey* event)
 {
-    if (event->keyval == GDK_KEY_Escape)
+    if (event->keyval == GDK_KEY_q)
     {
         close();
         return true;

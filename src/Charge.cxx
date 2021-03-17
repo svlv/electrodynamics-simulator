@@ -13,6 +13,11 @@ void Charges::clear()
     _negativeCharges.clear();
 }
 
+bool Charges::empty()
+{
+    return _positiveCharges.empty() && _negativeCharges.empty();
+}
+
 double Charges::getEx(const Coordinates& coordinates) const
 {
     auto sumEx = [&coordinates](double Ex, const Charge& charge) -> double

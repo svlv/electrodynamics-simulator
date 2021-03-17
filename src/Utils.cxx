@@ -1,15 +1,16 @@
 #include "Utils.hxx"
 
 #include <vector>
+#include <math.h>
 
 namespace maxwell
 {
 
 void draw_arrow(const Cairo::RefPtr<Cairo::Context>& cr,
-                Coordinates coord, const ArrowSize& size)
+                Coordinates coord, float sin_, float cos_, const ArrowSize& size)
 {
-    const std::vector<Coordinates> points = {
-        {-1.0*size.a, (size.b+size.d)/2.0},
+    std::vector<Coordinates> points = {
+        {-1.0*size.a/2, (size.b+size.d)/2.0},
         {size.a, 0.0},
         {0.0, -1.0*size.b},
         {size.c, 0.0},
@@ -18,6 +19,16 @@ void draw_arrow(const Cairo::RefPtr<Cairo::Context>& cr,
         {size.c, 0.0},
         {0.0, size.b}
     };
+
+    for (auto& point : points)
+    {
+        rotate(point, -1, 0);
+    }
+
+    for (auto& point : points)
+    {
+        rotate(point, sin_, cos_);
+    }
 
     coord += points[0];
     cr->move_to(coord.x, coord.y);
@@ -29,5 +40,14 @@ void draw_arrow(const Cairo::RefPtr<Cairo::Context>& cr,
 
     cr->stroke();
 }
+
+void rotate(Coordinates& coord, float sin_, float cos_)
+{
+    const auto x_ =  cos_ * coord.x + sin_ * coord.y;
+    const auto y_ = -1 * sin_ * coord.x + cos_ * coord.y;
+    coord.x = x_;
+    coord.y = y_;
+}
+
 
 } // namespace maxwell

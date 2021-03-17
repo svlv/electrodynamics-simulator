@@ -48,6 +48,7 @@ public:
     }
 
     void clear();
+    bool empty();
 
     double getEx(const Coordinates& coordinates) const;
     double getEy(const Coordinates& coordinates) const;
