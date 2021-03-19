@@ -22,7 +22,7 @@ void draw_arrow(const Cairo::RefPtr<Cairo::Context>& cr,
 
     for (auto& point : points)
     {
-        rotate(point, -1, 0);
+        rotate(point, 1, 0);
     }
 
     for (auto& point : points)

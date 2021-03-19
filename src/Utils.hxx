@@ -1,10 +1,13 @@
 #pragma once
 
-#include <cairomm-1.0/cairomm/context.h>
+#include <cairomm/context.h>
 
 namespace maxwell
 {
 
+// TODO: move in separate file
+// TODO: rename point
+// TODO: add rotate method
 struct Coordinates
 {
     Coordinates(double x_, double y_) : x(x_), y(y_) {}

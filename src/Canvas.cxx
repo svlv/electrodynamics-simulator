@@ -25,9 +25,6 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->paint();
     cr->restore();
 
-    //cr->arc(width / 2.0, height / 2.0, 2.0f, 0.0f, 2 * M_PI);
-    //cr->fill();
-
     // draw lines
     cr->save();
     Gdk::RGBA lines_color("#872323");
@@ -38,6 +35,7 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     const auto& posCharges = _charges.getPositiveCharges();
     const auto& negCharges = _charges.getNegativeCharges();
 
+    // draw arrows
     if (!_charges.empty())
     {
         double cur_x = 25;
