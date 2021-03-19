@@ -1,6 +1,6 @@
 
 #include <gtkmm/application.h>
-#include "window.hxx"
+#include "window.hpp"
 
 int main(int argc, char *argv[])
 {

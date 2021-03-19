@@ -1,4 +1,4 @@
-#include "Charge.hxx"
+#include "charge.hpp"
 
 #include <algorithm>
 #include <cmath>

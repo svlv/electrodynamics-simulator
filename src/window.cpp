@@ -1,4 +1,4 @@
-#include "window.hxx"
+#include "window.hpp"
 
 namespace maxwell
 {

@@ -1,4 +1,4 @@
-#include "Canvas.hxx"
+#include "canvas.hpp"
 
 #include <gtkmm.h>
 

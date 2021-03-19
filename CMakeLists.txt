@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 link_directories(${GTKMM_LIBRARY_DIRS})
 include_directories(${GTKMM_INCLUDE_DIRS})
 
-file(GLOB SRC "src/*.cxx")
+file(GLOB SRC "src/*.cpp")
 
 add_executable(${PROJECT_NAME} ${SRC})
 

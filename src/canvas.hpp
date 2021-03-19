@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gtkmm/drawingarea.h>
-#include "Charge.hxx"
+#include "charge.hpp"
 
 namespace maxwell
 {
