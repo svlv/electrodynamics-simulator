@@ -1,9 +1,9 @@
 #include "canvas.hpp"
 
-#include "point.hpp"
 #include "arrow.hpp"
-#include "utils.hpp"
 #include "constants.hpp"
+#include "point.hpp"
+#include "utils.hpp"
 
 #include <gtkmm.h>
 namespace maxwell
@@ -24,7 +24,7 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     // draw background
     cr->save();
-    
+
     Gdk::Cairo::set_source_rgba(cr, bg_color);
     cr->paint();
     cr->restore();
@@ -49,7 +49,9 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         while (cur_x + delta / 2.0 < width) {
             while (cur_y + delta / 2.0 < height) {
                 auto coordinates = point(cur_x, cur_y);
-                arrow arr({20.0, 28.0, 10.0, 20.0}, coordinates, get_angle(_charges.getCos(coordinates), _charges.getSin(coordinates)));
+                arrow arr({20.0, 28.0, 10.0, 20.0}, coordinates,
+                          get_angle(_charges.getCos(coordinates),
+                                    _charges.getSin(coordinates)));
                 arr.draw(cr);
                 cur_y += delta;
             }
@@ -129,8 +131,7 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     auto drawArc = [&cr](const charge& charge) {
         const auto& charge_coord = charge.get_coord();
-        cr->arc(charge_coord.x, charge_coord.y, 10.0f, 0.0f,
-                2 * M_PI);
+        cr->arc(charge_coord.x, charge_coord.y, 10.0f, 0.0f, 2 * M_PI);
         cr->fill();
     };
 

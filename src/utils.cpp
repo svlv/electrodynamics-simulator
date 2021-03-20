@@ -2,7 +2,8 @@
 
 #include <math.h>
 
-namespace maxwell {
+namespace maxwell
+{
 
 angle_t get_angle(double cos_val, double sin_val)
 {

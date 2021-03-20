@@ -3,8 +3,8 @@
 #include "graphics/point.hpp"
 #include "types.hpp"
 
-#include <vector>
 #include "point.hpp"
+#include <vector>
 
 #include <cairomm/context.h>
 
@@ -13,10 +13,8 @@ namespace maxwell
 
 class arrow
 {
-public:
-
-    struct params
-    {
+  public:
+    struct params {
         double a;
         double b;
         double c;
@@ -29,7 +27,7 @@ public:
     void move(const point& coord);
     void draw(const Cairo::RefPtr<Cairo::Context>& context) const;
 
-private:
+  private:
     void _init();
 
     params _size;

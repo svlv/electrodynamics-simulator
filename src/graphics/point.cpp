@@ -21,10 +21,7 @@ point& point::operator-=(const point& coord)
     return *this;
 }
 
-void point::move(const point& coord)
-{
-    this->operator+=(coord);
-}
+void point::move(const point& coord) { this->operator+=(coord); }
 
 void point::rotate(angle_t angle)
 {

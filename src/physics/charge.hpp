@@ -1,28 +1,21 @@
 #pragma once
 
 #include "graphics/point.hpp"
-#include <optional>
-#include <vector>
 
 namespace maxwell
 {
 
 class charge
 {
-public:
-
-    enum class type
-    {
-        negative = 0,
-        positive = 1
-    };
+  public:
+    enum class type { negative = 0, positive = 1 };
 
     charge(const point& coordinates_, double value_);
 
     const point& get_coord() const;
     double get_value() const;
 
-private:
+  private:
     point _coord;
     double _value;
 };

@@ -20,12 +20,12 @@ bool field::empty()
 
 double field::getEx(const point& coord) const
 {
-    const auto sumEx = [&coord](double Ex,
-                                      const charge& charge) -> double {
+    const auto sumEx = [&coord](double Ex, const charge& charge) -> double {
         const auto& charge_coord = charge.get_coord();
         double dx = coord.x - charge_coord.x;
         double dy = coord.y - charge_coord.y;
-        return Ex + charge.get_value() * dx / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
+        return Ex +
+               charge.get_value() * dx / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
     };
 
     return std::accumulate(_positiveCharges.cbegin(), _positiveCharges.cend(),
@@ -40,7 +40,8 @@ double field::getEy(const point& coord) const
         const auto& charge_coord = charge.get_coord();
         double dx = coord.x - charge_coord.x;
         double dy = coord.y - charge_coord.y;
-        return Ey + charge.get_value() * dy / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
+        return Ey +
+               charge.get_value() * dy / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
     };
 
     return std::accumulate(_positiveCharges.cbegin(), _positiveCharges.cend(),
@@ -51,8 +52,7 @@ double field::getEy(const point& coord) const
 
 double field::getE(const point& coord) const
 {
-    return pow(pow(getEx(coord), 2.0) + pow(getEy(coord), 2.0),
-               0.5);
+    return pow(pow(getEx(coord), 2.0) + pow(getEy(coord), 2.0), 0.5);
 }
 
 double field::getCos(const point& coord) const
@@ -85,8 +85,7 @@ const field::Data& field::getNegativeCharges() const
     return _negativeCharges;
 }
 
-std::optional<point> field::isNear(const point& coord,
-                                     charge::type type) const
+std::optional<point> field::isNear(const point& coord, charge::type type) const
 {
     const auto pred = [&coord](const charge& charge) {
         const double delta = 100;

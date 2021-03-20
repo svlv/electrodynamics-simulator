@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <optional>
+#include <vector>
 
 #include "graphics/point.hpp"
 #include "physics/charge.hpp"
