@@ -18,14 +18,17 @@ class field
     using Iter = Data::iterator;
     using ConstIter = Data::const_iterator;
 
-    template <typename... Ts> void emplaceBackPositiveCharge(Ts&&... args)
+    template <typename... Ts> void emplace_back(charge::type type, Ts&&... args)
     {
-        _positiveCharges.emplace_back(std::forward<Ts>(args)...);
-    }
-
-    template <typename... Ts> void emplaceBackNegativeCharge(Ts&&... args)
-    {
-        _negativeCharges.emplace_back(std::forward<Ts>(args)...);
+        switch (type)
+        {
+        case charge::type::positive:
+            _positiveCharges.emplace_back(std::forward<Ts>(args)...);
+            break;
+        case charge::type::negative:
+            _negativeCharges.emplace_back(std::forward<Ts>(args)...);
+            break;
+        }
     }
 
     void clear();

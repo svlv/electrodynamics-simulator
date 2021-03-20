@@ -22,10 +22,12 @@ class arrow
     };
 
     arrow(const params& size, const point& coord, angle_t angle);
+    arrow() = default;
 
     void rotate(angle_t angle);
     void move(const point& coord);
     void draw(const Cairo::RefPtr<Cairo::Context>& context) const;
+    bool inside(const point& coord);
 
   private:
     void _init();

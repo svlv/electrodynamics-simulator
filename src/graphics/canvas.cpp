@@ -6,10 +6,11 @@
 #include "utils.hpp"
 
 #include <gtkmm.h>
+#include <iostream>
 namespace maxwell
 {
 
-Canvas::Canvas()
+Canvas::Canvas() //: _arrow({20.0, 28.0, 10.0, 20.0}, point(200, 200), 0)
 {
     add_events(Gdk::BUTTON_PRESS_MASK);
     add_events(Gdk::KEY_PRESS_MASK);
@@ -37,6 +38,8 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     const auto& posCharges = _charges.getPositiveCharges();
     const auto& negCharges = _charges.getNegativeCharges();
+
+    //_arrow.draw(cr);
 
     // draw arrows
     if (!_charges.empty()) {
@@ -150,13 +153,24 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
 {
     if (event->type == GDK_BUTTON_PRESS) {
         if (event->button == 1) {
-            _charges.emplaceBackPositiveCharge(point(event->x, event->y), 1.0);
+            _charges.emplace_back(charge::type::positive, point(event->x, event->y), 1.0);
             queue_draw();
         } else if (event->button == 3) {
-            _charges.emplaceBackNegativeCharge(point(event->x, event->y), -1.0);
+            _charges.emplace_back(charge::type::negative, point(event->x, event->y), -1.0);
             queue_draw();
         }
     }
+
+    //if (_arrow.inside(point(event->x, event->y)))
+    //{
+    //    std::cout << "Inside\n";
+    //}
+    //else
+    //{
+    //    std::cout << "Outside\n";
+    //}
+    
+
     // std::cout << "Mouse press\n";
     return false;
 }

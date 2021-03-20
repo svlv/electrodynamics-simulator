@@ -57,4 +57,15 @@ void arrow::draw(const Cairo::RefPtr<Cairo::Context>& context) const
     context->stroke();
 }
 
+bool arrow::inside(const point& coord)
+{
+    const auto check = [&coord, this](size_t i1, size_t i2)
+    {
+        return (_points[i2].x - _points[i1].x) * (coord.y - _points[i1].y) -
+               (_points[i2].y - _points[i1].y) * (coord.x - _points[i1].x) < 0;
+    };
+
+    return (check(5, 3) && check(3, 4) && check(4,5)) || (check(0,1) && check(1,2) && check(2,6) && check(6,0));
+}
+
 } // namespace maxwell

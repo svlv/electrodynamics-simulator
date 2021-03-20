@@ -2,7 +2,7 @@
 
 #include "physics/field.hpp"
 #include <gtkmm/drawingarea.h>
-
+#include "graphics/arrow.hpp"
 namespace maxwell
 {
 
@@ -21,6 +21,7 @@ class Canvas : public Gtk::DrawingArea
   private:
     field _charges;
     bool _draw_lines = false;
+    //arrow _arrow;
 };
 
 } // namespace maxwell
