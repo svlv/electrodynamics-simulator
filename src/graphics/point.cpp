@@ -1,4 +1,5 @@
 #include "point.hpp"
+#include <cmath>
 
 namespace maxwell
 {
@@ -18,6 +19,31 @@ point& point::operator-=(const point& coord)
     x -= coord.x;
     y -= coord.y;
     return *this;
+}
+
+void point::move(const point& coord)
+{
+    this->operator+=(coord);
+}
+
+void point::rotate(angle_t angle)
+{
+    const auto cos_val = std::cos(angle);
+    const auto sin_val = std::sin(angle);
+    const auto x_ = cos_val * x - sin_val * y;
+    const auto y_ = sin_val * x + cos_val * y;
+    x = x_;
+    y = y_;
+}
+
+point operator+(const point& lhs, const point& rhs)
+{
+    return point(lhs.x + rhs.x, lhs.y + rhs.y);
+}
+
+point operator-(const point& lhs, const point& rhs)
+{
+    return point(lhs.x - rhs.x, lhs.y - rhs.y);
 }
 
 } // namespace maxwell

@@ -1,9 +1,11 @@
 #include "canvas.hpp"
 
 #include "point.hpp"
+#include "arrow.hpp"
+#include "utils.hpp"
+#include "constants.hpp"
 
 #include <gtkmm.h>
-
 namespace maxwell
 {
 
@@ -22,14 +24,13 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     // draw background
     cr->save();
-    Gdk::RGBA bg_color("#ffefd7");
+    
     Gdk::Cairo::set_source_rgba(cr, bg_color);
     cr->paint();
     cr->restore();
 
     // draw lines
     cr->save();
-    Gdk::RGBA lines_color("#872323");
     cr->set_line_width(5.0);
 
     const size_t lines_count = 8;
@@ -48,8 +49,8 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         while (cur_x + delta / 2.0 < width) {
             while (cur_y + delta / 2.0 < height) {
                 auto coordinates = point(cur_x, cur_y);
-                draw_arrow(cr, coordinates, _charges.getSin(coordinates),
-                           _charges.getCos(coordinates));
+                arrow arr({20.0, 28.0, 10.0, 20.0}, coordinates, get_angle(_charges.getCos(coordinates), _charges.getSin(coordinates)));
+                arr.draw(cr);
                 cur_y += delta;
             }
             cur_x += delta;
@@ -130,11 +131,9 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         cr->fill();
     };
 
-    Gdk::RGBA positive_charge_color("#ff0000");
     Gdk::Cairo::set_source_rgba(cr, positive_charge_color);
     std::for_each(posCharges.cbegin(), posCharges.cend(), drawArc);
 
-    Gdk::RGBA negative_charge_color("#0000ff");
     Gdk::Cairo::set_source_rgba(cr, negative_charge_color);
     std::for_each(negCharges.cbegin(), negCharges.cend(), drawArc);
 

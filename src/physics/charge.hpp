@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils.hpp"
+#include "graphics/point.hpp"
 #include <optional>
 #include <vector>
 
