@@ -18,7 +18,7 @@ bool Charges::empty()
     return _positiveCharges.empty() && _negativeCharges.empty();
 }
 
-double Charges::getEx(const Coordinates& coordinates) const
+double Charges::getEx(const point& coordinates) const
 {
     auto sumEx = [&coordinates](double Ex, const Charge& charge) -> double
     {
@@ -32,7 +32,7 @@ double Charges::getEx(const Coordinates& coordinates) const
         std::accumulate(_negativeCharges.cbegin(), _negativeCharges.cend(), 0.0, sumEx);
 }
 
-double Charges::getEy(const Coordinates& coordinates) const
+double Charges::getEy(const point& coordinates) const
 {
     auto sumEy = [&coordinates](double Ey, const Charge& charge) -> double
     {
@@ -46,27 +46,27 @@ double Charges::getEy(const Coordinates& coordinates) const
         std::accumulate(_negativeCharges.cbegin(), _negativeCharges.cend(), 0.0, sumEy);
 }
 
-double Charges::getE(const Coordinates& coordinates) const
+double Charges::getE(const point& coordinates) const
 {
     return pow(pow(getEx(coordinates), 2.0) + pow(getEy(coordinates), 2.0), 0.5);
 }
 
-double Charges::getCos(const Coordinates& coordinates) const
+double Charges::getCos(const point& coordinates) const
 {
     return getEx(coordinates) / getE(coordinates);
 }
 
-double Charges::getSin(const Coordinates& coordinates) const
+double Charges::getSin(const point& coordinates) const
 {
     return getEy(coordinates) / getE(coordinates);
 }
 
-std::optional<Coordinates> Charges::isComeToNegative(const Coordinates& coordinates) const
+std::optional<point> Charges::isComeToNegative(const point& coordinates) const
 {
     return isNear(coordinates, ChargeType::Negative);
 }
 
-std::optional<Coordinates> Charges::isComeToPositive(const Coordinates& coordinates) const
+std::optional<point> Charges::isComeToPositive(const point& coordinates) const
 {
     return isNear(coordinates, ChargeType::Positive);
 }
@@ -81,7 +81,7 @@ const Charges::Data& Charges::getNegativeCharges() const
     return _negativeCharges;
 }
 
-std::optional<Coordinates> Charges::isNear(const Coordinates& coordinates, ChargeType type) const
+std::optional<point> Charges::isNear(const point& coordinates, ChargeType type) const
 {
     const auto pred = [&coordinates](const Charge& charge)
     {

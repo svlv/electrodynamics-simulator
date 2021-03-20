@@ -9,14 +9,14 @@ namespace maxwell
 
 struct Charge
 {
-    Charge(const Coordinates& coordinates_, int value_)
+    Charge(const point& coordinates_, int value_)
         : coordinates(coordinates_)
         , value(value_) {}
     Charge(double x_, double y_, int value_)
         : coordinates(x_, y_)
         , value(value_) {}
 
-    Coordinates coordinates;
+    point coordinates;
     int value;
 };
 
@@ -50,21 +50,21 @@ public:
     void clear();
     bool empty();
 
-    double getEx(const Coordinates& coordinates) const;
-    double getEy(const Coordinates& coordinates) const;
-    double getE (const Coordinates& coordinates) const;
+    double getEx(const point& coordinates) const;
+    double getEy(const point& coordinates) const;
+    double getE (const point& coordinates) const;
 
-    double getCos(const Coordinates& coordinates) const;
-    double getSin(const Coordinates& coordinates) const;
+    double getCos(const point& coordinates) const;
+    double getSin(const point& coordinates) const;
 
-    std::optional<Coordinates> isComeToNegative(const Coordinates& coordinates) const;
-    std::optional<Coordinates> isComeToPositive(const Coordinates& coordinates) const;
+    std::optional<point> isComeToNegative(const point& coordinates) const;
+    std::optional<point> isComeToPositive(const point& coordinates) const;
 
     const Data& getPositiveCharges() const;
     const Data& getNegativeCharges() const;
 
 private:
-    std::optional<Coordinates> isNear(const Coordinates& coordinates, ChargeType type) const;
+    std::optional<point> isNear(const point& coordinates, ChargeType type) const;
 
     Data _positiveCharges;
     Data _negativeCharges;

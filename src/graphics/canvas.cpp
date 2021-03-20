@@ -1,5 +1,7 @@
 #include "canvas.hpp"
 
+#include "point.hpp"
+
 #include <gtkmm.h>
 
 namespace maxwell
@@ -48,7 +50,7 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         {
             while (cur_y + delta / 2.0 < height)
             {
-                auto coordinates = Coordinates(cur_x, cur_y);
+                auto coordinates = point(cur_x, cur_y);
                 draw_arrow(cr, coordinates, _charges.getSin(coordinates), _charges.getCos(coordinates));
                 cur_y += delta;
             }
@@ -71,7 +73,7 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 double y = charge.coordinates.y + sin(i * 2 * M_PI / lines_count) * dl;
                 for (size_t j = 0; x < width && x > 0 && y < height && y > 0 && j < 1000; ++j)
                 {
-                    auto coordinates = Coordinates(x, y);
+                    auto coordinates = point(x, y);
                     auto end = _charges.isComeToNegative(coordinates);
                     if (end)
                     {
@@ -101,8 +103,8 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 double y = charge.coordinates.y + sin(i * 2 * M_PI / lines_count) * dl;
                 for (size_t j = 0; x < width && x > 0 && y < height && y > 0 && j < 1000; ++j)
                 {
-                    auto coordinates = Coordinates(x, y);
-                    auto end = _charges.isComeToPositive(Coordinates(x, y));
+                    auto coordinates = point(x, y);
+                    auto end = _charges.isComeToPositive(point(x, y));
                     if (end)
                     {
                         cr->line_to(end->x, end->y);

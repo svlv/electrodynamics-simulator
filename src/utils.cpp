@@ -7,9 +7,9 @@ namespace maxwell
 {
 
 void draw_arrow(const Cairo::RefPtr<Cairo::Context>& cr,
-                Coordinates coord, float sin_, float cos_, const ArrowSize& size)
+                point coord, float sin_, float cos_, const ArrowSize& size)
 {
-    std::vector<Coordinates> points = {
+    std::vector<point> points = {
         {-1.0*size.a/2, (size.b+size.d)/2.0},
         {size.a, 0.0},
         {0.0, -1.0*size.b},
@@ -41,7 +41,7 @@ void draw_arrow(const Cairo::RefPtr<Cairo::Context>& cr,
     cr->stroke();
 }
 
-void rotate(Coordinates& coord, float sin_, float cos_)
+void rotate(point& coord, float sin_, float cos_)
 {
     const auto x_ =  cos_ * coord.x - sin_ * coord.y;
     const auto y_ =  sin_ * coord.x + cos_ * coord.y;
