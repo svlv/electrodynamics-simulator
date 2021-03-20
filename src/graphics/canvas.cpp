@@ -64,11 +64,12 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         const double dl = 10.0;
         for (const auto& charge : posCharges) {
             for (size_t i = 0; i < lines_count; ++i) {
-                cr->move_to(charge.coordinates.x, charge.coordinates.y);
+                const auto& charge_coord = charge.get_coord();
+                cr->move_to(charge_coord.x, charge_coord.y);
                 double x =
-                    charge.coordinates.x + cos(i * 2 * M_PI / lines_count) * dl;
+                    charge_coord.x + cos(i * 2 * M_PI / lines_count) * dl;
                 double y =
-                    charge.coordinates.y + sin(i * 2 * M_PI / lines_count) * dl;
+                    charge_coord.y + sin(i * 2 * M_PI / lines_count) * dl;
                 for (size_t j = 0;
                      x < width && x > 0 && y < height && y > 0 && j < 1000;
                      ++j) {
@@ -93,11 +94,12 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
         for (const auto& charge : negCharges) {
             for (size_t i = 0; i < lines_count; ++i) {
-                cr->move_to(charge.coordinates.x, charge.coordinates.y);
+                const auto& charge_coord = charge.get_coord();
+                cr->move_to(charge_coord.x, charge_coord.y);
                 double x =
-                    charge.coordinates.x + cos(i * 2 * M_PI / lines_count) * dl;
+                    charge_coord.x + cos(i * 2 * M_PI / lines_count) * dl;
                 double y =
-                    charge.coordinates.y + sin(i * 2 * M_PI / lines_count) * dl;
+                    charge_coord.y + sin(i * 2 * M_PI / lines_count) * dl;
                 for (size_t j = 0;
                      x < width && x > 0 && y < height && y > 0 && j < 1000;
                      ++j) {
@@ -125,8 +127,9 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     // draw charges
     cr->save();
 
-    auto drawArc = [&cr](const Charge& charge) {
-        cr->arc(charge.coordinates.x, charge.coordinates.y, 10.0f, 0.0f,
+    auto drawArc = [&cr](const charge& charge) {
+        const auto& charge_coord = charge.get_coord();
+        cr->arc(charge_coord.x, charge_coord.y, 10.0f, 0.0f,
                 2 * M_PI);
         cr->fill();
     };
@@ -146,10 +149,10 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
 {
     if (event->type == GDK_BUTTON_PRESS) {
         if (event->button == 1) {
-            _charges.emplaceBackPositiveCharge(event->x, event->y, 1);
+            _charges.emplaceBackPositiveCharge(point(event->x, event->y), 1.0);
             queue_draw();
         } else if (event->button == 3) {
-            _charges.emplaceBackNegativeCharge(event->x, event->y, -1);
+            _charges.emplaceBackNegativeCharge(point(event->x, event->y), -1.0);
             queue_draw();
         }
     }

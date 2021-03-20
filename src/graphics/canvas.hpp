@@ -1,6 +1,6 @@
 #pragma once
 
-#include "physics/charge.hpp"
+#include "physics/field.hpp"
 #include <gtkmm/drawingarea.h>
 
 namespace maxwell
@@ -19,7 +19,7 @@ class Canvas : public Gtk::DrawingArea
     bool on_key_press_event(GdkEventKey* event) override;
 
   private:
-    Charges _charges;
+    field _charges;
     bool _draw_lines = false;
 };
 

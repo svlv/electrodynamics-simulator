@@ -7,63 +7,24 @@
 namespace maxwell
 {
 
-struct Charge {
-    Charge(const point& coordinates_, int value_)
-        : coordinates(coordinates_), value(value_)
-    {
-    }
-    Charge(double x_, double y_, int value_)
-        : coordinates(x_, y_), value(value_)
-    {
-    }
-
-    point coordinates;
-    int value;
-};
-
-enum class ChargeType { Negative = 0, Positive = 1 };
-
-class Charges
+class charge
 {
-  public:
-    Charges() = default;
+public:
 
-    using Data = std::vector<Charge>;
-    using Iter = Data::iterator;
-    using ConstIter = Data::const_iterator;
-
-    template <typename... Ts> void emplaceBackPositiveCharge(Ts&&... args)
+    enum class type
     {
-        _positiveCharges.emplace_back(std::forward<Ts>(args)...);
-    }
+        negative = 0,
+        positive = 1
+    };
 
-    template <typename... Ts> void emplaceBackNegativeCharge(Ts&&... args)
-    {
-        _negativeCharges.emplace_back(std::forward<Ts>(args)...);
-    }
+    charge(const point& coordinates_, double value_);
 
-    void clear();
-    bool empty();
+    const point& get_coord() const;
+    double get_value() const;
 
-    double getEx(const point& coordinates) const;
-    double getEy(const point& coordinates) const;
-    double getE(const point& coordinates) const;
-
-    double getCos(const point& coordinates) const;
-    double getSin(const point& coordinates) const;
-
-    std::optional<point> isComeToNegative(const point& coordinates) const;
-    std::optional<point> isComeToPositive(const point& coordinates) const;
-
-    const Data& getPositiveCharges() const;
-    const Data& getNegativeCharges() const;
-
-  private:
-    std::optional<point> isNear(const point& coordinates,
-                                ChargeType type) const;
-
-    Data _positiveCharges;
-    Data _negativeCharges;
+private:
+    point _coord;
+    double _value;
 };
 
 } // namespace maxwell
