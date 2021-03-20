@@ -38,20 +38,18 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     const auto& negCharges = _charges.getNegativeCharges();
 
     // draw arrows
-    if (!_charges.empty())
-    {
+    if (!_charges.empty()) {
         double cur_x = 25;
         double cur_y = 25;
         double delta = 50;
 
         cr->save();
 
-        while (cur_x + delta / 2.0 < width)
-        {
-            while (cur_y + delta / 2.0 < height)
-            {
+        while (cur_x + delta / 2.0 < width) {
+            while (cur_y + delta / 2.0 < height) {
                 auto coordinates = point(cur_x, cur_y);
-                draw_arrow(cr, coordinates, _charges.getSin(coordinates), _charges.getCos(coordinates));
+                draw_arrow(cr, coordinates, _charges.getSin(coordinates),
+                           _charges.getCos(coordinates));
                 cur_y += delta;
             }
             cur_x += delta;
@@ -61,31 +59,29 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         cr->restore();
     }
 
-    if (_draw_lines)
-    {
+    if (_draw_lines) {
         const double dl = 10.0;
-        for (const auto& charge : posCharges)
-        {
-            for (size_t i = 0; i < lines_count; ++i)
-            {
+        for (const auto& charge : posCharges) {
+            for (size_t i = 0; i < lines_count; ++i) {
                 cr->move_to(charge.coordinates.x, charge.coordinates.y);
-                double x = charge.coordinates.x + cos(i * 2 * M_PI / lines_count) * dl;
-                double y = charge.coordinates.y + sin(i * 2 * M_PI / lines_count) * dl;
-                for (size_t j = 0; x < width && x > 0 && y < height && y > 0 && j < 1000; ++j)
-                {
+                double x =
+                    charge.coordinates.x + cos(i * 2 * M_PI / lines_count) * dl;
+                double y =
+                    charge.coordinates.y + sin(i * 2 * M_PI / lines_count) * dl;
+                for (size_t j = 0;
+                     x < width && x > 0 && y < height && y > 0 && j < 1000;
+                     ++j) {
                     auto coordinates = point(x, y);
                     auto end = _charges.isComeToNegative(coordinates);
-                    if (end)
-                    {
+                    if (end) {
                         cr->line_to(end->x, end->y);
                         break;
                     }
-                    cr->line_to(x,y);
+                    cr->line_to(x, y);
                     double dx = _charges.getCos(coordinates) * dl;
                     double dy = _charges.getSin(coordinates) * dl;
-                    if (fabs(dx) < 1.0 && fabs(dy) < 1.0)
-                    {
-                      break;
+                    if (fabs(dx) < 1.0 && fabs(dy) < 1.0) {
+                        break;
                     }
                     x += dx;
                     y += dy;
@@ -94,28 +90,27 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             }
         }
 
-        for (const auto& charge : negCharges)
-        {
-            for (size_t i = 0; i < lines_count; ++i)
-            {
+        for (const auto& charge : negCharges) {
+            for (size_t i = 0; i < lines_count; ++i) {
                 cr->move_to(charge.coordinates.x, charge.coordinates.y);
-                double x = charge.coordinates.x + cos(i * 2 * M_PI / lines_count) * dl;
-                double y = charge.coordinates.y + sin(i * 2 * M_PI / lines_count) * dl;
-                for (size_t j = 0; x < width && x > 0 && y < height && y > 0 && j < 1000; ++j)
-                {
+                double x =
+                    charge.coordinates.x + cos(i * 2 * M_PI / lines_count) * dl;
+                double y =
+                    charge.coordinates.y + sin(i * 2 * M_PI / lines_count) * dl;
+                for (size_t j = 0;
+                     x < width && x > 0 && y < height && y > 0 && j < 1000;
+                     ++j) {
                     auto coordinates = point(x, y);
                     auto end = _charges.isComeToPositive(point(x, y));
-                    if (end)
-                    {
+                    if (end) {
                         cr->line_to(end->x, end->y);
                         break;
                     }
-                    cr->line_to(x,y);
+                    cr->line_to(x, y);
                     double dx = _charges.getCos(coordinates) * dl;
                     double dy = _charges.getSin(coordinates) * dl;
-                    if (fabs(dx) < 1.0 && fabs(dy) < 1.0)
-                    {
-                      break;
+                    if (fabs(dx) < 1.0 && fabs(dy) < 1.0) {
+                        break;
                     }
                     x -= dx;
                     y -= dy;
@@ -129,9 +124,9 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     // draw charges
     cr->save();
 
-    auto drawArc = [&cr](const Charge& charge)
-    {
-        cr->arc(charge.coordinates.x, charge.coordinates.y, 10.0f, 0.0f, 2 * M_PI);
+    auto drawArc = [&cr](const Charge& charge) {
+        cr->arc(charge.coordinates.x, charge.coordinates.y, 10.0f, 0.0f,
+                2 * M_PI);
         cr->fill();
     };
 
@@ -150,36 +145,29 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
 bool Canvas::on_button_press_event(GdkEventButton* event)
 {
-    if (event->type == GDK_BUTTON_PRESS)
-    {
-        if (event->button == 1)
-        {
+    if (event->type == GDK_BUTTON_PRESS) {
+        if (event->button == 1) {
             _charges.emplaceBackPositiveCharge(event->x, event->y, 1);
             queue_draw();
-        }
-        else if (event->button == 3)
-        {
+        } else if (event->button == 3) {
             _charges.emplaceBackNegativeCharge(event->x, event->y, -1);
             queue_draw();
         }
     }
-    //std::cout << "Mouse press\n";
+    // std::cout << "Mouse press\n";
     return false;
 }
 
 bool Canvas::on_key_press_event(GdkEventKey* event)
 {
-    if (event->keyval == GDK_KEY_g)
-    {
+    if (event->keyval == GDK_KEY_g) {
         _draw_lines = !_draw_lines;
         queue_draw();
-    }
-    else if (event->keyval == GDK_KEY_c)
-    {
+    } else if (event->keyval == GDK_KEY_c) {
         _charges.clear();
         queue_draw();
     }
-    //std::cout << "Canvas : key press\n";
+    // std::cout << "Canvas : key press\n";
     return false;
 }
 

@@ -2,21 +2,23 @@
 
 #include "canvas.hpp"
 
-#include <gtkmm/window.h>
 #include <gtkmm/frame.h>
+#include <gtkmm/window.h>
 
 namespace maxwell
 {
 
 class MainWindow : public Gtk::Window
 {
-public:
+  public:
     MainWindow();
     virtual ~MainWindow() = default;
-protected:
+
+  protected:
     Canvas _canvas;
     Gtk::Frame _frame;
-private:
+
+  private:
     bool on_key_press_event(GdkEventKey* event) override;
 };
 

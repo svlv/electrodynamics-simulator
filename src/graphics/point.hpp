@@ -3,8 +3,7 @@
 namespace maxwell
 {
 
-struct point
-{
+struct point {
     point(double x_, double y_);
     point(const point& other);
     point& operator+=(const point& coord);
@@ -13,4 +12,4 @@ struct point
     double y;
 };
 
-} //namespace maxwell
+} // namespace maxwell
