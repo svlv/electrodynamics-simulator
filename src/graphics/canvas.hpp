@@ -23,10 +23,12 @@ class Canvas : public Gtk::DrawingArea
     void on_size_allocate(Gtk::Allocation& allocation) override;
 
   private:
-    void _init_arrows();
+    void _init_arrows(int width, int height);
+    void _draw_arrows(const Cairo::RefPtr<Cairo::Context>& cr);
 
     field _charges;
     bool _draw_lines = false;
+    bool _draw_lines_flag = true;
     std::vector<arrow> _arrows;
 };
 
