@@ -10,11 +10,16 @@
 namespace maxwell
 {
 
-Canvas::Canvas() //: _arrow({20.0, 28.0, 10.0, 20.0}, point(200, 200), 0)
+Canvas::Canvas()
 {
     add_events(Gdk::BUTTON_PRESS_MASK);
+    add_events(Gdk::POINTER_MOTION_MASK);
     add_events(Gdk::KEY_PRESS_MASK);
     property_can_focus() = true;
+}
+
+void Canvas::_init_arrows()
+{
 }
 
 bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
@@ -22,6 +27,8 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     Gtk::Allocation allocation = get_allocation();
     const int width = allocation.get_width();
     const int height = allocation.get_height();
+
+    //std::cout << width << " " << height << std::endl;
 
     // draw background
     cr->save();
@@ -43,25 +50,24 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     // draw arrows
     if (!_charges.empty()) {
-        double cur_x = 25;
-        double cur_y = 25;
-        double delta = 50;
-
         cr->save();
 
-        while (cur_x + delta / 2.0 < width) {
-            while (cur_y + delta / 2.0 < height) {
-                auto coordinates = point(cur_x, cur_y);
-                arrow arr({20.0, 28.0, 10.0, 20.0}, coordinates,
-                          get_angle(_charges.getCos(coordinates),
-                                    _charges.getSin(coordinates)));
-                arr.draw(cr);
-                cur_y += delta;
-            }
-            cur_x += delta;
-            cur_y = 25;
-        }
+        for (auto& arr : _arrows)
+        {
+            const auto& coord = arr.get_coord();
+            arr.rotate(get_angle(_charges.getCos(coord), _charges.getSin(coord)));
 
+            if (arr.is_selected())
+            {
+                Gdk::Cairo::set_source_rgba(cr, highlight_arrow_color);
+            }
+            else
+            {
+                Gdk::Cairo::set_source_rgba(cr, arrow_color);
+            }
+            
+            arr.draw(cr);
+        }
         cr->restore();
     }
 
@@ -161,16 +167,6 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
         }
     }
 
-    //if (_arrow.inside(point(event->x, event->y)))
-    //{
-    //    std::cout << "Inside\n";
-    //}
-    //else
-    //{
-    //    std::cout << "Outside\n";
-    //}
-    
-
     // std::cout << "Mouse press\n";
     return false;
 }
@@ -186,6 +182,48 @@ bool Canvas::on_key_press_event(GdkEventKey* event)
     }
     // std::cout << "Canvas : key press\n";
     return false;
+}
+
+bool Canvas::on_motion_notify_event(GdkEventMotion* event)
+{
+    const auto coord = point(event->x, event->y);
+
+    for (auto& arr : _arrows)
+    {
+        arr.select(arr.is_hint(coord));
+    }
+    queue_draw();
+    return false;
+}
+
+void Canvas::on_size_allocate(Gtk::Allocation& allocation)
+{
+    _arrows.clear();
+
+    const int width = allocation.get_width();
+    const int height = allocation.get_height();
+
+    //std::cout << width << " " << height << std::endl;
+
+    double cur_x = 25;
+    double cur_y = 25;
+    double delta = 50;
+
+    //std::cout << "beg on_size_allocate\n";
+
+    while (cur_x + delta / 2.0 < width) {
+        while (cur_y + delta / 2.0 < height) {
+            _arrows.emplace_back(arrow::params{20.0, 28.0, 10.0, 20.0}, point(cur_x, cur_y), 0.0);
+            cur_y += delta;
+        }
+        cur_x += delta;
+        cur_y = 25;
+    }
+
+    //std::cout << "end on_size_allocate\n";
+
+    Gtk::DrawingArea::on_size_allocate(allocation);
+
 }
 
 } // namespace maxwell

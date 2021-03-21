@@ -27,7 +27,12 @@ class arrow
     void rotate(angle_t angle);
     void move(const point& coord);
     void draw(const Cairo::RefPtr<Cairo::Context>& context) const;
-    bool inside(const point& coord);
+    bool is_hint(const point& coord);
+
+    void select(bool flag);
+    bool is_selected() const;
+
+    const point& get_coord() const;
 
   private:
     void _init();
@@ -36,6 +41,7 @@ class arrow
     point _coord;
     angle_t _angle;
     std::vector<point> _points;
+    bool _is_selected;
 };
 
 } // namespace maxwell

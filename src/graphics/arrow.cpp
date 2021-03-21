@@ -5,7 +5,7 @@ namespace maxwell
 {
 
 arrow::arrow(const params& size, const point& coord, angle_t angle)
-    : _size(size), _coord(0.0, 0.0), _angle(0.0)
+    : _size(size), _coord(0.0, 0.0), _angle(0.0), _is_selected(false)
 {
     _init();
     rotate(angle);
@@ -26,11 +26,16 @@ void arrow::_init()
 
 void arrow::rotate(angle_t angle)
 {
+    const auto coord = _coord;
+    move(point(0.0, 0.0));
+
     const auto delta = angle - _angle;
     for (auto& point : _points) {
         point.rotate(delta);
     }
     _angle = angle;
+
+    move(coord);
 }
 
 void arrow::move(const point& coord)
@@ -57,7 +62,7 @@ void arrow::draw(const Cairo::RefPtr<Cairo::Context>& context) const
     context->stroke();
 }
 
-bool arrow::inside(const point& coord)
+bool arrow::is_hint(const point& coord)
 {
     const auto check = [&coord, this](size_t i1, size_t i2)
     {
@@ -66,6 +71,21 @@ bool arrow::inside(const point& coord)
     };
 
     return (check(5, 3) && check(3, 4) && check(4,5)) || (check(0,1) && check(1,2) && check(2,6) && check(6,0));
+}
+
+void arrow::select(bool flag)
+{
+    _is_selected = flag;
+}
+
+bool arrow::is_selected() const
+{
+    return _is_selected;
+}
+
+const point& arrow::get_coord() const
+{
+    return _coord;
 }
 
 } // namespace maxwell
