@@ -1,6 +1,15 @@
 # Electric field simulator
 Simple graphic electric field simulator written on C++ using GTK+.
 
+# Build
+```
+git clone git@github.com:asuvalov/electrodynamics-simulator.git
+cd electrodynamics-simulator
+mkdir build && cd build
+cmake ..
+make
+```
+
 # Keybindings
 | Key        | Action           |
 | ------------- |:-------------:|
