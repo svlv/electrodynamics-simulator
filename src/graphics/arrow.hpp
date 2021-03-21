@@ -26,7 +26,7 @@ class arrow
 
     void rotate(angle_t angle);
     void move(const point& coord);
-    void draw(const Cairo::RefPtr<Cairo::Context>& context) const;
+    void draw(const Cairo::RefPtr<Cairo::Context>& context, bool fill) const;
     bool is_hint(const point& coord);
 
     void select(bool flag);

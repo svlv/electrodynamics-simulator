@@ -47,7 +47,7 @@ void arrow::move(const point& coord)
     _coord = coord;
 }
 
-void arrow::draw(const Cairo::RefPtr<Cairo::Context>& context) const
+void arrow::draw(const Cairo::RefPtr<Cairo::Context>& context, bool fill) const
 {
     if (_points.empty()) {
         return;
@@ -57,6 +57,11 @@ void arrow::draw(const Cairo::RefPtr<Cairo::Context>& context) const
 
     for (size_t idx = 1; idx < _points.size(); ++idx) {
         context->line_to(_points[idx].x, _points[idx].y);
+    }
+
+    if (fill)
+    {
+        context->fill();
     }
 
     context->stroke();

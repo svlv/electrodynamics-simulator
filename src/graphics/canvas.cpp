@@ -53,8 +53,7 @@ void Canvas::_draw_arrows(const Cairo::RefPtr<Cairo::Context>& cr)
             {
                 Gdk::Cairo::set_source_rgba(cr, arrow_color);
             }
-            
-            arr.draw(cr);
+            arr.draw(cr, fill_arrow);
         }
         cr->restore();
     }

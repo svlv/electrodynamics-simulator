@@ -16,5 +16,6 @@ const Gdk::RGBA highlight_arrow_color("#2398AB");
 
 const double arrow_delta = 50.0;
 const arrow::params default_arrow_size = {20.0, 28.0, 10.0, 20.0};
+const bool fill_arrow = true;
 
 } // namespace maxwell
