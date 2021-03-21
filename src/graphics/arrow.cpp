@@ -75,7 +75,17 @@ bool arrow::is_hint(const point& coord)
                (_points[i2].y - _points[i1].y) * (coord.x - _points[i1].x) < 0;
     };
 
-    return (check(5, 3) && check(3, 4) && check(4,5)) || (check(0,1) && check(1,2) && check(2,6) && check(6,0));
+    const auto inside_triangle = [&check]()
+    {
+        return check(5, 3) && check(3, 4) && check(4,5);
+    };
+
+    const auto inside_rectangle = [&check]()
+    {
+        return check(0,1) && check(1,2) && check(2,6) && check(6,0);
+    };
+
+    return inside_triangle() || inside_rectangle();
 }
 
 void arrow::select(bool flag)
