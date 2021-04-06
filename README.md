@@ -11,10 +11,10 @@ cmake ..
 make
 ```
 # Mouse events
-| Events        | Action           |
+| Event        | Action           |
 | ------------- |:-------------:|
-| Press right key | Add positive charge|
-| Press left key | Add negative charge|
+| Press right button | Add positive charge|
+| Press left button | Add negative charge|
 
 # Keybindings
 | Key        | Action           |
