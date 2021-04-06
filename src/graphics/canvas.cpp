@@ -35,7 +35,7 @@ void Canvas::_init_arrows(int width, int height)
     }
 }
 
-void Canvas::_draw_arrows(const Cairo::RefPtr<Cairo::Context>& cr)
+void Canvas::_draw_arrows(const size& sz, const Cairo::RefPtr<Cairo::Context>& cr)
 {
     if (_draw_lines_flag && !_charges.empty()) {
         cr->save();
@@ -47,6 +47,8 @@ void Canvas::_draw_arrows(const Cairo::RefPtr<Cairo::Context>& cr)
 
             if (arr.is_selected()) {
                 Gdk::Cairo::set_source_rgba(cr, highlight_arrow_color);
+                draw_line(arr.get_coord(), true, sz, cr);
+                draw_line(arr.get_coord(), false, sz, cr);
             } else {
                 Gdk::Cairo::set_source_rgba(cr, arrow_color);
             }
@@ -107,7 +109,7 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     const auto& posCharges = _charges.getPositiveCharges();
     const auto& negCharges = _charges.getNegativeCharges();
 
-    _draw_arrows(cr);
+    _draw_arrows(sz, cr);
 
     if (_draw_lines) {
         for (const auto& charge : posCharges) {
