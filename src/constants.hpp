@@ -1,7 +1,7 @@
 #pragma once
 
-#include <gdkmm/rgba.h>
 #include "graphics/arrow.hpp"
+#include <gdkmm/rgba.h>
 
 namespace maxwell
 {

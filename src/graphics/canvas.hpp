@@ -1,8 +1,8 @@
 #pragma once
 
+#include "graphics/arrow.hpp"
 #include "physics/field.hpp"
 #include <gtkmm/drawingarea.h>
-#include "graphics/arrow.hpp"
 #include <vector>
 
 namespace maxwell

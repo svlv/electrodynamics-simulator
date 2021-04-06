@@ -40,17 +40,14 @@ void Canvas::_draw_arrows(const Cairo::RefPtr<Cairo::Context>& cr)
     if (_draw_lines_flag && !_charges.empty()) {
         cr->save();
 
-        for (auto& arr : _arrows)
-        {
+        for (auto& arr : _arrows) {
             const auto& coord = arr.get_coord();
-            arr.rotate(get_angle(_charges.getCos(coord), _charges.getSin(coord)));
+            arr.rotate(
+                get_angle(_charges.getCos(coord), _charges.getSin(coord)));
 
-            if (arr.is_selected())
-            {
+            if (arr.is_selected()) {
                 Gdk::Cairo::set_source_rgba(cr, highlight_arrow_color);
-            }
-            else
-            {
+            } else {
                 Gdk::Cairo::set_source_rgba(cr, arrow_color);
             }
             arr.draw(cr, fill_arrow);
@@ -65,7 +62,7 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     const int width = allocation.get_width();
     const int height = allocation.get_height();
 
-    //std::cout << width << " " << height << std::endl;
+    // std::cout << width << " " << height << std::endl;
 
     // draw background
     cr->save();
@@ -173,10 +170,12 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
 {
     if (event->type == GDK_BUTTON_PRESS) {
         if (event->button == 1) {
-            _charges.emplace_back(charge::type::positive, point(event->x, event->y), 1.0);
+            _charges.emplace_back(charge::type::positive,
+                                  point(event->x, event->y), 1.0);
             queue_draw();
         } else if (event->button == 3) {
-            _charges.emplace_back(charge::type::negative, point(event->x, event->y), -1.0);
+            _charges.emplace_back(charge::type::negative,
+                                  point(event->x, event->y), -1.0);
             queue_draw();
         }
     }
@@ -204,8 +203,7 @@ bool Canvas::on_motion_notify_event(GdkEventMotion* event)
 {
     const auto coord = point(event->x, event->y);
 
-    for (auto& arr : _arrows)
-    {
+    for (auto& arr : _arrows) {
         arr.select(arr.is_hint(coord));
     }
     queue_draw();

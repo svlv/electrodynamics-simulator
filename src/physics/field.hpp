@@ -20,8 +20,7 @@ class field
 
     template <typename... Ts> void emplace_back(charge::type type, Ts&&... args)
     {
-        switch (type)
-        {
+        switch (type) {
         case charge::type::positive:
             _positiveCharges.emplace_back(std::forward<Ts>(args)...);
             break;

@@ -59,8 +59,7 @@ void arrow::draw(const Cairo::RefPtr<Cairo::Context>& context, bool fill) const
         context->line_to(_points[idx].x, _points[idx].y);
     }
 
-    if (fill)
-    {
+    if (fill) {
         context->fill();
     }
 
@@ -69,38 +68,27 @@ void arrow::draw(const Cairo::RefPtr<Cairo::Context>& context, bool fill) const
 
 bool arrow::is_hint(const point& coord)
 {
-    const auto check = [&coord, this](size_t i1, size_t i2)
-    {
+    const auto check = [&coord, this](size_t i1, size_t i2) {
         return (_points[i2].x - _points[i1].x) * (coord.y - _points[i1].y) -
-               (_points[i2].y - _points[i1].y) * (coord.x - _points[i1].x) < 0;
+                   (_points[i2].y - _points[i1].y) * (coord.x - _points[i1].x) <
+               0;
     };
 
-    const auto inside_triangle = [&check]()
-    {
-        return check(5, 3) && check(3, 4) && check(4,5);
+    const auto inside_triangle = [&check]() {
+        return check(5, 3) && check(3, 4) && check(4, 5);
     };
 
-    const auto inside_rectangle = [&check]()
-    {
-        return check(0,1) && check(1,2) && check(2,6) && check(6,0);
+    const auto inside_rectangle = [&check]() {
+        return check(0, 1) && check(1, 2) && check(2, 6) && check(6, 0);
     };
 
     return inside_triangle() || inside_rectangle();
 }
 
-void arrow::select(bool flag)
-{
-    _is_selected = flag;
-}
+void arrow::select(bool flag) { _is_selected = flag; }
 
-bool arrow::is_selected() const
-{
-    return _is_selected;
-}
+bool arrow::is_selected() const { return _is_selected; }
 
-const point& arrow::get_coord() const
-{
-    return _coord;
-}
+const point& arrow::get_coord() const { return _coord; }
 
 } // namespace maxwell
