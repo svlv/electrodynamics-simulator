@@ -1,6 +1,6 @@
 # Electric field simulator
 Simple graphic electric field simulator written on C++ using GTK+.
-![](https://github.com/asuvalov/electrodynamics-simulator/blob/master/.screenshots/highlight_arrow.png =250x)
+<img src="https://github.com/asuvalov/electrodynamics-simulator/blob/master/.screenshots/highlight_arrow.png" alt="drawing" width="200"/>
 
 # Build
 ```
