@@ -56,13 +56,42 @@ void Canvas::_draw_arrows(const Cairo::RefPtr<Cairo::Context>& cr)
     }
 }
 
+void Canvas::draw_line(point pos, bool positive, const size& sz,
+                       const Cairo::RefPtr<Cairo::Context>& cr)
+{
+    const auto valid_position = [&pos, &sz]() {
+        return pos.x > 0 && pos.x < sz.width && pos.y > 0 && pos.y < sz.height;
+    };
+
+    cr->move_to(pos.x, pos.y);
+    // iteration counter is used because sometimes it's impossible for line to
+    // leave a room
+    for (size_t i = 0; i < 1000 && valid_position(); ++i) {
+        auto end = positive ? _charges.isComeToNegative(pos)
+                            : _charges.isComeToPositive(pos);
+        if (end) {
+            cr->line_to(end->x, end->y);
+            break;
+        }
+        double dx = _charges.getCos(pos) * line_delta;
+        double dy = _charges.getSin(pos) * line_delta;
+        if (fabs(dx) < 1.0 && fabs(dy) < 1.0) {
+            break;
+        }
+        if (positive) {
+            pos += point(dx, dy);
+        } else {
+            pos -= point(dx, dy);
+        }
+        cr->line_to(pos.x, pos.y);
+    }
+    cr->stroke();
+}
+
 bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     Gtk::Allocation allocation = get_allocation();
-    const int width = allocation.get_width();
-    const int height = allocation.get_height();
-
-    // std::cout << width << " " << height << std::endl;
+    const auto sz = size(allocation.get_width(), allocation.get_height());
 
     // draw background
     cr->save();
@@ -73,9 +102,7 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     // draw lines
     cr->save();
-    cr->set_line_width(5.0);
-
-    const size_t lines_count = 8;
+    cr->set_line_width(line_width);
 
     const auto& posCharges = _charges.getPositiveCharges();
     const auto& negCharges = _charges.getNegativeCharges();
@@ -83,64 +110,27 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     _draw_arrows(cr);
 
     if (_draw_lines) {
-        const double dl = 10.0;
         for (const auto& charge : posCharges) {
-            for (size_t i = 0; i < lines_count; ++i) {
+            for (size_t i = 0; i < lines_per_charge; ++i) {
                 const auto& charge_coord = charge.get_coord();
-                cr->move_to(charge_coord.x, charge_coord.y);
-                double x =
-                    charge_coord.x + cos(i * 2 * M_PI / lines_count) * dl;
-                double y =
-                    charge_coord.y + sin(i * 2 * M_PI / lines_count) * dl;
-                for (size_t j = 0;
-                     x < width && x > 0 && y < height && y > 0 && j < 1000;
-                     ++j) {
-                    auto coordinates = point(x, y);
-                    auto end = _charges.isComeToNegative(coordinates);
-                    if (end) {
-                        cr->line_to(end->x, end->y);
-                        break;
-                    }
-                    cr->line_to(x, y);
-                    double dx = _charges.getCos(coordinates) * dl;
-                    double dy = _charges.getSin(coordinates) * dl;
-                    if (fabs(dx) < 1.0 && fabs(dy) < 1.0) {
-                        break;
-                    }
-                    x += dx;
-                    y += dy;
-                }
-                cr->stroke();
+                auto pos = point(
+                    charge_coord.x +
+                        cos(i * 2 * M_PI / lines_per_charge) * line_delta,
+                    charge_coord.y +
+                        sin(i * 2 * M_PI / lines_per_charge) * line_delta);
+                draw_line(pos, true, sz, cr);
             }
         }
 
         for (const auto& charge : negCharges) {
-            for (size_t i = 0; i < lines_count; ++i) {
+            for (size_t i = 0; i < lines_per_charge; ++i) {
                 const auto& charge_coord = charge.get_coord();
-                cr->move_to(charge_coord.x, charge_coord.y);
-                double x =
-                    charge_coord.x + cos(i * 2 * M_PI / lines_count) * dl;
-                double y =
-                    charge_coord.y + sin(i * 2 * M_PI / lines_count) * dl;
-                for (size_t j = 0;
-                     x < width && x > 0 && y < height && y > 0 && j < 1000;
-                     ++j) {
-                    auto coordinates = point(x, y);
-                    auto end = _charges.isComeToPositive(point(x, y));
-                    if (end) {
-                        cr->line_to(end->x, end->y);
-                        break;
-                    }
-                    cr->line_to(x, y);
-                    double dx = _charges.getCos(coordinates) * dl;
-                    double dy = _charges.getSin(coordinates) * dl;
-                    if (fabs(dx) < 1.0 && fabs(dy) < 1.0) {
-                        break;
-                    }
-                    x -= dx;
-                    y -= dy;
-                }
-                cr->stroke();
+                auto pos = point(
+                    charge_coord.x +
+                        cos(i * 2 * M_PI / lines_per_charge) * line_delta,
+                    charge_coord.y +
+                        sin(i * 2 * M_PI / lines_per_charge) * line_delta);
+                draw_line(pos, false, sz, cr);
             }
         }
     }

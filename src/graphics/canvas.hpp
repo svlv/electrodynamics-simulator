@@ -2,9 +2,9 @@
 
 #include "graphics/arrow.hpp"
 #include "physics/field.hpp"
+#include "utils.hpp"
 #include <gtkmm/drawingarea.h>
 #include <vector>
-
 namespace maxwell
 {
 
@@ -25,6 +25,9 @@ class Canvas : public Gtk::DrawingArea
   private:
     void _init_arrows(int width, int height);
     void _draw_arrows(const Cairo::RefPtr<Cairo::Context>& cr);
+    // TODO is temporal method
+    void draw_line(point pos, bool positive, const size& sz,
+                   const Cairo::RefPtr<Cairo::Context>& cr);
 
     field _charges;
     bool _draw_lines = false;
