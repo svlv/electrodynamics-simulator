@@ -35,7 +35,8 @@ void Canvas::_init_arrows(int width, int height)
     }
 }
 
-void Canvas::_draw_arrows(const size& sz, const Cairo::RefPtr<Cairo::Context>& cr)
+void Canvas::_draw_arrows(const size& sz,
+                          const Cairo::RefPtr<Cairo::Context>& cr)
 {
     if (_draw_lines_flag && !_charges.empty()) {
         cr->save();
