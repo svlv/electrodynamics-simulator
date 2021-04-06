@@ -10,6 +10,11 @@ mkdir build && cd build
 cmake ..
 make
 ```
+# Mouse events
+| Events        | Action           |
+| ------------- |:-------------:|
+| Press right key | Add positive charge|
+| Press left key | Add negative charge|
 
 # Keybindings
 | Key        | Action           |
