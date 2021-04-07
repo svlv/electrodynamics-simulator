@@ -10,6 +10,18 @@
 namespace maxwell
 {
 
+class context_guard {
+  public:
+    explicit context_guard(const Cairo::RefPtr<Cairo::Context>& cr) : _cr(cr) {
+      _cr->save();
+    }
+    ~context_guard() {
+      _cr->restore();
+    }
+  private:
+    const Cairo::RefPtr<Cairo::Context>& _cr;
+};
+
 Canvas::Canvas()
 {
     add_events(Gdk::BUTTON_PRESS_MASK);
@@ -38,7 +50,8 @@ void Canvas::_draw_arrows(const size& sz,
                           const Cairo::RefPtr<Cairo::Context>& cr)
 {
     if (_draw_lines_flag && !_charges.empty()) {
-        cr->save();
+        const auto guard = context_guard(cr);
+        Gdk::Cairo::set_source_rgba(cr, arrow_color);
 
         for (auto& arr : _arrows) {
             const auto& coord = arr.get_coord();
@@ -46,15 +59,16 @@ void Canvas::_draw_arrows(const size& sz,
                 get_angle(_charges.getCos(coord), _charges.getSin(coord)));
 
             if (arr.is_selected()) {
+                const auto guard = context_guard(cr);
                 Gdk::Cairo::set_source_rgba(cr, highlight_arrow_color);
-                draw_line(arr.get_coord(), true, sz, cr);
-                draw_line(arr.get_coord(), false, sz, cr);
-            } else {
-                Gdk::Cairo::set_source_rgba(cr, arrow_color);
+                draw_line(coord, true, sz, cr);
+                draw_line(coord, false, sz, cr);
+                arr.draw(cr, fill_arrow);
+                continue;
             }
+
             arr.draw(cr, fill_arrow);
         }
-        cr->restore();
     }
 }
 
@@ -165,7 +179,6 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
             queue_draw();
         }
     }
-
     return false;
 }
 
@@ -187,7 +200,6 @@ bool Canvas::on_key_press_event(GdkEventKey* event)
 bool Canvas::on_motion_notify_event(GdkEventMotion* event)
 {
     const auto coord = point(event->x, event->y);
-
     for (auto& arr : _arrows) {
         arr.select(arr.is_hint(coord));
     }
