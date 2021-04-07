@@ -75,9 +75,8 @@ void Canvas::draw_line(point pos, bool positive, const size& sz,
             cr->line_to(end->x, end->y);
             break;
         }
-        const auto delta = point(
-          _charges.getCos(pos) * line_delta,
-          _charges.getSin(pos) * line_delta);
+        const auto delta = point(_charges.getCos(pos) * line_delta,
+                                 _charges.getSin(pos) * line_delta);
         if (fabs(delta.x) < 1.0 && fabs(delta.y) < 1.0) {
             break;
         }
@@ -113,8 +112,9 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     _draw_arrows(sz, cr);
 
     const auto get_begin = [](const point& coord, size_t idx) -> point {
-      return point(coord.x + cos(idx * 2 * M_PI / lines_per_charge) * line_delta,
-          coord.y + sin(idx * 2 * M_PI / lines_per_charge) * line_delta);
+        return point(
+            coord.x + cos(idx * 2 * M_PI / lines_per_charge) * line_delta,
+            coord.y + sin(idx * 2 * M_PI / lines_per_charge) * line_delta);
     };
 
     if (_draw_lines) {
