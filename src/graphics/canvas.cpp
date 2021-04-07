@@ -22,16 +22,15 @@ void Canvas::_init_arrows(int width, int height)
 {
     _arrows.clear();
 
-    double cur_x = arrow_delta / 2.0;
-    double cur_y = arrow_delta / 2.0;
+    auto pos = point(arrow_delta / 2.0, arrow_delta / 2.0);
 
-    while (cur_x + arrow_delta / 2.0 < width) {
-        while (cur_y + arrow_delta / 2.0 < height) {
-            _arrows.emplace_back(default_arrow_size, point(cur_x, cur_y), 0.0);
-            cur_y += arrow_delta;
+    while (pos.x + arrow_delta / 2.0 < width) {
+        while (pos.y + arrow_delta / 2.0 < height) {
+            _arrows.emplace_back(default_arrow_size, pos, 0.0);
+            pos.y += arrow_delta;
         }
-        cur_x += arrow_delta;
-        cur_y = arrow_delta / 2.0;
+        pos.x += arrow_delta;
+        pos.y = arrow_delta / 2.0;
     }
 }
 
@@ -76,15 +75,16 @@ void Canvas::draw_line(point pos, bool positive, const size& sz,
             cr->line_to(end->x, end->y);
             break;
         }
-        double dx = _charges.getCos(pos) * line_delta;
-        double dy = _charges.getSin(pos) * line_delta;
-        if (fabs(dx) < 1.0 && fabs(dy) < 1.0) {
+        const auto delta = point(
+          _charges.getCos(pos) * line_delta,
+          _charges.getSin(pos) * line_delta);
+        if (fabs(delta.x) < 1.0 && fabs(delta.y) < 1.0) {
             break;
         }
         if (positive) {
-            pos += point(dx, dy);
+            pos += delta;
         } else {
-            pos -= point(dx, dy);
+            pos -= delta;
         }
         cr->line_to(pos.x, pos.y);
     }
@@ -107,33 +107,26 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->save();
     cr->set_line_width(line_width);
 
-    const auto& posCharges = _charges.getPositiveCharges();
-    const auto& negCharges = _charges.getNegativeCharges();
+    const auto& pos_charges = _charges.getPositiveCharges();
+    const auto& neg_charges = _charges.getNegativeCharges();
 
     _draw_arrows(sz, cr);
 
+    const auto get_begin = [](const point& coord, size_t idx) -> point {
+      return point(coord.x + cos(idx * 2 * M_PI / lines_per_charge) * line_delta,
+          coord.y + sin(idx * 2 * M_PI / lines_per_charge) * line_delta);
+    };
+
     if (_draw_lines) {
-        for (const auto& charge : posCharges) {
-            for (size_t i = 0; i < lines_per_charge; ++i) {
-                const auto& charge_coord = charge.get_coord();
-                auto pos = point(
-                    charge_coord.x +
-                        cos(i * 2 * M_PI / lines_per_charge) * line_delta,
-                    charge_coord.y +
-                        sin(i * 2 * M_PI / lines_per_charge) * line_delta);
-                draw_line(pos, true, sz, cr);
+        for (const auto& charge : pos_charges) {
+            for (size_t idx = 0; idx < lines_per_charge; ++idx) {
+                draw_line(get_begin(charge.get_coord(), idx), true, sz, cr);
             }
         }
 
-        for (const auto& charge : negCharges) {
-            for (size_t i = 0; i < lines_per_charge; ++i) {
-                const auto& charge_coord = charge.get_coord();
-                auto pos = point(
-                    charge_coord.x +
-                        cos(i * 2 * M_PI / lines_per_charge) * line_delta,
-                    charge_coord.y +
-                        sin(i * 2 * M_PI / lines_per_charge) * line_delta);
-                draw_line(pos, false, sz, cr);
+        for (const auto& charge : neg_charges) {
+            for (size_t idx = 0; idx < lines_per_charge; ++idx) {
+                draw_line(get_begin(charge.get_coord(), idx), false, sz, cr);
             }
         }
     }
@@ -142,17 +135,17 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     // draw charges
     cr->save();
 
-    auto drawArc = [&cr](const charge& charge) {
+    auto draw_arc = [&cr](const charge& charge) {
         const auto& charge_coord = charge.get_coord();
         cr->arc(charge_coord.x, charge_coord.y, 10.0f, 0.0f, 2 * M_PI);
         cr->fill();
     };
 
     Gdk::Cairo::set_source_rgba(cr, positive_charge_color);
-    std::for_each(posCharges.cbegin(), posCharges.cend(), drawArc);
+    std::for_each(pos_charges.cbegin(), pos_charges.cend(), draw_arc);
 
     Gdk::Cairo::set_source_rgba(cr, negative_charge_color);
-    std::for_each(negCharges.cbegin(), negCharges.cend(), drawArc);
+    std::for_each(neg_charges.cbegin(), neg_charges.cend(), draw_arc);
 
     cr->restore();
 
@@ -173,7 +166,6 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
         }
     }
 
-    // std::cout << "Mouse press\n";
     return false;
 }
 
