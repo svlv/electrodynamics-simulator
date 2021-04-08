@@ -56,8 +56,7 @@ void Canvas::_draw_arrows(const size& sz,
 
         for (auto& arr : _arrows) {
             const auto& coord = arr.get_coord();
-            arr.rotate(
-                get_angle(_charges.getCos(coord), _charges.getSin(coord)));
+            arr.rotate(_charges.get_angle(coord));
 
             if (arr.is_selected()) {
                 const auto guard = context_guard(cr);

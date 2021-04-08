@@ -33,6 +33,8 @@ class field
     void clear();
     bool empty();
 
+    double get_angle(const point& coord) const;
+
     double getEx(const point& coordinates) const;
     double getEy(const point& coordinates) const;
     double getE(const point& coordinates) const;

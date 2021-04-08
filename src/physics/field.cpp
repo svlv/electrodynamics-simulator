@@ -1,4 +1,5 @@
 #include "physics/field.hpp"
+#include "utils.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -18,14 +19,16 @@ bool field::empty()
     return _positiveCharges.empty() && _negativeCharges.empty();
 }
 
+double field::get_angle(const point& coord) const
+{
+    return maxwell::get_angle(getCos(coord), getSin(coord));
+}
+
 double field::getEx(const point& coord) const
 {
     const auto sumEx = [&coord](double Ex, const charge& charge) -> double {
-        const auto& charge_coord = charge.get_coord();
-        double dx = coord.x - charge_coord.x;
-        double dy = coord.y - charge_coord.y;
-        return Ex +
-               charge.get_value() * dx / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
+        const auto delta = coord - charge.get_coord();
+        return Ex + charge.get_value() * delta.x / pow(delta.module(), 3.0);
     };
 
     return std::accumulate(_positiveCharges.cbegin(), _positiveCharges.cend(),
@@ -37,11 +40,8 @@ double field::getEx(const point& coord) const
 double field::getEy(const point& coord) const
 {
     auto sumEy = [&coord](double Ey, const charge& charge) -> double {
-        const auto& charge_coord = charge.get_coord();
-        double dx = coord.x - charge_coord.x;
-        double dy = coord.y - charge_coord.y;
-        return Ey +
-               charge.get_value() * dy / pow(pow(dx, 2.0) + pow(dy, 2.0), 1.5);
+        const auto delta = coord - charge.get_coord();
+        return Ey + charge.get_value() * delta.y / pow(delta.module(), 3.0);
     };
 
     return std::accumulate(_positiveCharges.cbegin(), _positiveCharges.cend(),
@@ -88,11 +88,9 @@ const field::Data& field::getNegativeCharges() const
 std::optional<point> field::isNear(const point& coord, charge::type type) const
 {
     const auto pred = [&coord](const charge& charge) {
-        const double delta = 100;
-        const auto& charge_coord = charge.get_coord();
-        return pow(charge_coord.x - coord.x, 2.0) +
-                   pow(charge_coord.y - coord.y, 2.0) <
-               delta;
+        const double min_delta = 10.0;
+        const auto delta = charge.get_coord() - coord;
+        return delta.module() < min_delta;
     };
     switch (type) {
     case charge::type::negative: {
