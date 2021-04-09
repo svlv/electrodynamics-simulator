@@ -8,7 +8,7 @@ namespace maxwell
 class charge
 {
   public:
-    enum class type { negative = 0, positive = 1 };
+    enum class type { negative = 0, positive = 1 , any = 2};
 
     charge(const point& coordinates_, double value_);
 
