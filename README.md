@@ -12,11 +12,14 @@ cmake ..
 make
 ```
 # Features
-Drawing arrows to demonstrate electric field direction. It's possible to show /
-hide them.
-Drawing electric field lines to demonstrate interaction between positive and
-negative charges. It's possible to show / hide them.
-Hightlighting arrows under the cursor with corresponding line
+* Drawing arrows to demonstrate electric field direction:
+ * It's possible to show or hide the arrows.
+ * Hightlighting arrows under the cursor with the corresponding line.
+* Drawing electric field lines to demonstrate interaction between positive and
+negative charges:
+ * It's possible to show or hide the lines.
+ * Moving a charge under the cursor.
+
 
 # Mouse events
 | Event        | Action           |
