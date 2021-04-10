@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(electric-field)
+project(elfield)
 
 find_package(PkgConfig)
 pkg_check_modules(GTKMM gtkmm-3.0)
