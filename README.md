@@ -1,4 +1,4 @@
-# Electric field simulator.<br />Easy to install - easy to demonstrate.
+# Elfield - electric field simulator<br />Easy to install - easy to demonstrate
 Simple graphic electric field simulator written on C++ using GTK+.
 <br />
 <img src="https://github.com/svlv/elfield/blob/master/.screenshots/highlight_arrow.png" alt="drawing" width="400"/>
