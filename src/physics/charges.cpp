@@ -14,23 +14,22 @@ bool charges::empty()
   return _positive_charges.empty() && _negative_charges.empty();
 }
 
-std::optional<point> charges::get_hint(const point& coord, charge::type type, double dist)
+charge* charges::get_hint(const point& coord, charge::type type, double dist)
 {
     const auto pred = [&coord, &dist](const charge& charge) {
         const auto delta = charge.get_coord() - coord;
         return delta.module() < dist;
     };
 
-    const auto hint = [&pred](data_t& charges) -> std::optional<point>
+    const auto hint = [&pred](data_t& charges) -> charge*
     {
         auto it = std::find_if(charges.begin(), charges.end(), pred);
         if (it != charges.end()) {
-            return it->get_coord();
+            return &(*it);
         }
-        return {};
+        return nullptr;
     };
-
-    std::optional<point> res;
+    charge* res = nullptr;
     switch (type) {
     case charge::type::negative: {
         res = hint(_negative_charges);
@@ -42,7 +41,7 @@ std::optional<point> charges::get_hint(const point& coord, charge::type type, do
     }
     case charge::type::any: {
         res = hint(_negative_charges);
-        if (!res.has_value()) {
+        if (!res) {
           res = hint(_positive_charges);
         }
         break;

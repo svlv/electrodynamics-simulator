@@ -83,10 +83,11 @@ void Canvas::draw_line(point pos, bool positive, const size& sz,
     // iteration counter is used because sometimes it's impossible for line to
     // leave a room
     for (size_t i = 0; i < 1000 && valid_position(); ++i) {
-        auto end = positive ? _charges.get_hint(pos, charge::type::negative, 10.0)
+        auto* end = positive ? _charges.get_hint(pos, charge::type::negative, 10.0)
                             : _charges.get_hint(pos, charge::type::positive, 10.0);
-        if (end.has_value()) {
-            cr->line_to(end->x, end->y);
+        if (end) {
+            const auto& coord = end->get_coord();
+            cr->line_to(coord.x, coord.y);
             break;
         }
         const auto delta = point(_field.get_cos(pos) * line_delta,
