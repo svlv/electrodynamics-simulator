@@ -26,6 +26,7 @@ class context_guard
 Canvas::Canvas() : _field(_charges)
 {
     add_events(Gdk::BUTTON_PRESS_MASK);
+    add_events(Gdk::BUTTON_RELEASE_MASK);
     add_events(Gdk::POINTER_MOTION_MASK);
     add_events(Gdk::KEY_PRESS_MASK);
     property_can_focus() = true;
@@ -170,17 +171,34 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 bool Canvas::on_button_press_event(GdkEventButton* event)
 {
     if (event->type == GDK_BUTTON_PRESS) {
+        const auto coord = point(event->x, event->y);
         if (event->button == 1) {
+            auto* selected_charge = _charges.get_hint(coord, charge::type::any, 10.0);
+            if (selected_charge) {
+                _charges.set_selected(selected_charge);
+            } else {
             _charges.emplace_back(charge::type::positive,
-                                  point(event->x, event->y), 1.0);
+                                  coord, 1.0);
             queue_draw();
+            }
         } else if (event->button == 3) {
             _charges.emplace_back(charge::type::negative,
-                                  point(event->x, event->y), -1.0);
+                                  coord, -1.0);
             queue_draw();
         }
     }
     return false;
+}
+
+
+bool Canvas::on_button_release_event(GdkEventButton* event)
+{
+  _charges.set_selected(nullptr);
+  
+        for (auto& arr : _arrows) {
+            arr.select(false);
+        }
+  return false;
 }
 
 bool Canvas::on_key_press_event(GdkEventKey* event)
@@ -201,8 +219,13 @@ bool Canvas::on_key_press_event(GdkEventKey* event)
 bool Canvas::on_motion_notify_event(GdkEventMotion* event)
 {
     const auto coord = point(event->x, event->y);
-    for (auto& arr : _arrows) {
-        arr.select(arr.is_hint(coord));
+    auto* chrg = _charges.get_selected();
+    if (chrg) {
+      chrg->set_coord(coord);
+    } else {
+        for (auto& arr : _arrows) {
+            arr.select(arr.is_hint(coord));
+        }
     }
     queue_draw();
     return false;

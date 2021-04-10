@@ -13,8 +13,8 @@ class charge
     charge(const point& coordinates_, double value_);
 
     const point& get_coord() const;
+    void set_coord(const point& coord);
     double get_value() const;
-
   private:
     point _coord;
     double _value;

@@ -11,7 +11,7 @@ class charges
 {
   public:
     using data_t = std::vector<charge>;
-
+    charges();
     template <typename... Ts> void emplace_back(charge::type type, Ts&&... args)
     {
         switch (type) {
@@ -28,12 +28,16 @@ class charges
 
     charge* get_hint(const point& coord, charge::type type, double dist);
 
+    charge* get_selected();
+    void set_selected(charge* chrg);
+
     const data_t& get_positive_charges() const;
     const data_t& get_negative_charges() const;
 
   private:
     data_t _positive_charges;
     data_t _negative_charges;
+    charge* _selected;
 };
 
 } // namespace maxwell

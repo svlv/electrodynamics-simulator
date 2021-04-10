@@ -2,7 +2,7 @@
 #include <algorithm>
 namespace maxwell
 {
-
+charges::charges() : _selected(nullptr) {}
 void charges::clear()
 {
   _positive_charges.clear();
@@ -58,6 +58,16 @@ const charges::data_t& charges::get_positive_charges() const
 const charges::data_t& charges::get_negative_charges() const
 {
   return _negative_charges;
+}
+
+charge* charges::get_selected()
+{
+ return _selected;
+}
+
+void charges::set_selected(charge* chrg)
+{
+  _selected = chrg;
 }
 
 } // namespace maxwell
