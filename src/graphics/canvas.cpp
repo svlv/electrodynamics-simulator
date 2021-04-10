@@ -23,7 +23,7 @@ class context_guard
     const Cairo::RefPtr<Cairo::Context>& _cr;
 };
 
-Canvas::Canvas()
+Canvas::Canvas() : _field(_charges)
 {
     add_events(Gdk::BUTTON_PRESS_MASK);
     add_events(Gdk::POINTER_MOTION_MASK);
@@ -56,7 +56,7 @@ void Canvas::_draw_arrows(const size& sz,
 
         for (auto& arr : _arrows) {
             const auto& coord = arr.get_coord();
-            arr.rotate(_charges.get_angle(coord));
+            arr.rotate(_field.get_angle(coord));
 
             if (arr.is_selected()) {
                 const auto guard = context_guard(cr);
@@ -83,14 +83,14 @@ void Canvas::draw_line(point pos, bool positive, const size& sz,
     // iteration counter is used because sometimes it's impossible for line to
     // leave a room
     for (size_t i = 0; i < 1000 && valid_position(); ++i) {
-        auto end = positive ? _charges.isComeToNegative(pos)
-                            : _charges.isComeToPositive(pos);
-        if (end) {
+        auto end = positive ? _charges.get_hint(pos, charge::type::negative, 10.0)
+                            : _charges.get_hint(pos, charge::type::positive, 10.0);
+        if (end.has_value()) {
             cr->line_to(end->x, end->y);
             break;
         }
-        const auto delta = point(_charges.getCos(pos) * line_delta,
-                                 _charges.getSin(pos) * line_delta);
+        const auto delta = point(_field.get_cos(pos) * line_delta,
+                                 _field.get_sin(pos) * line_delta);
         if (fabs(delta.x) < 1.0 && fabs(delta.y) < 1.0) {
             break;
         }
@@ -120,8 +120,8 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->save();
     cr->set_line_width(line_width);
 
-    const auto& pos_charges = _charges.getPositiveCharges();
-    const auto& neg_charges = _charges.getNegativeCharges();
+    const auto& pos_charges = _charges.get_positive_charges();
+    const auto& neg_charges = _charges.get_negative_charges();
 
     _draw_arrows(sz, cr);
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "charge.hpp"
 #include <vector>
 #include <optional>
@@ -24,7 +26,7 @@ class charges
     void clear();
     bool empty();
 
-    std::optional<charge&> get_hint(const point& coord, charge::type type);
+    std::optional<point> get_hint(const point& coord, charge::type type, double dist);
 
     const data_t& get_positive_charges() const;
     const data_t& get_negative_charges() const;

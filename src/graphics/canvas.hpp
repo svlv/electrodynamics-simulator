@@ -5,6 +5,8 @@
 #include "utils.hpp"
 #include <gtkmm/drawingarea.h>
 #include <vector>
+#include "physics/charges.hpp"
+
 namespace maxwell
 {
 
@@ -29,7 +31,8 @@ class Canvas : public Gtk::DrawingArea
     void draw_line(point pos, bool positive, const size& sz,
                    const Cairo::RefPtr<Cairo::Context>& cr);
 
-    field _charges;
+    charges _charges;
+    field _field;
     bool _draw_lines = false;
     bool _draw_lines_flag = true;
     std::vector<arrow> _arrows;

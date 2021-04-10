@@ -18,11 +18,11 @@ class field
     double get_Ey(const point& coord) const;
     double get_E(const point& coord) const;
 
-    double getCos(const point& coord) const;
-    double getSin(const point& coord) const;
+    double get_cos(const point& coord) const;
+    double get_sin(const point& coord) const;
 
   private:
-    std::reference_wrapper<charges> _charges;
+    std::reference_wrapper<const charges> _charges;
 };
 
 } // namespace maxwell

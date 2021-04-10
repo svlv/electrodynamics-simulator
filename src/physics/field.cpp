@@ -12,10 +12,10 @@ field::field(const charges& chrgs) : _charges(chrgs) {}
 
 double field::get_angle(const point& coord) const
 {
-    return maxwell::get_angle(getCos(coord), getSin(coord));
+    return maxwell::get_angle(get_cos(coord), get_sin(coord));
 }
 
-double field::getEx(const point& coord) const
+double field::get_Ex(const point& coord) const
 {
     const auto sumEx = [&coord](double Ex, const charge& charge) -> double {
         const auto delta = coord - charge.get_coord();
@@ -29,7 +29,7 @@ double field::getEx(const point& coord) const
            std::accumulate(neg.cbegin(), neg.cend(), 0.0, sumEx);
 }
 
-double field::getEy(const point& coord) const
+double field::get_Ey(const point& coord) const
 {
     auto sumEy = [&coord](double Ey, const charge& charge) -> double {
         const auto delta = coord - charge.get_coord();
@@ -45,19 +45,19 @@ double field::getEy(const point& coord) const
                            0.0, sumEy);
 }
 
-double field::getE(const point& coord) const
+double field::get_E(const point& coord) const
 {
-    return pow(pow(getEx(coord), 2.0) + pow(getEy(coord), 2.0), 0.5);
+    return pow(pow(get_Ex(coord), 2.0) + pow(get_Ey(coord), 2.0), 0.5);
 }
 
-double field::getCos(const point& coord) const
+double field::get_cos(const point& coord) const
 {
-    return getEx(coord) / getE(coord);
+    return get_Ex(coord) / get_E(coord);
 }
 
-double field::getSin(const point& coord) const
+double field::get_sin(const point& coord) const
 {
-    return getEy(coord) / getE(coord);
+    return get_Ey(coord) / get_E(coord);
 }
 
 } // namespace maxwell
