@@ -48,7 +48,7 @@ void Canvas::_draw_arrows(const size& sz,
             arr.rotate(_field.get_angle(coord));
 
             if (arr.is_selected()) {
-                const auto guard = context_guard(cr);
+                const context_guard guard(cr);
                 Gdk::Cairo::set_source_rgba(cr, highlight_arrow_color);
                 draw_line(coord, true, sz, cr);
                 draw_line(coord, false, sz, cr);
