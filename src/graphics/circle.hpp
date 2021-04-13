@@ -1,21 +1,28 @@
 #pragma once
-#include "graphics/point.hpp"
+
+#include "physics/charge.hpp"
+#include <cairomm/context.h>
 
 namespace maxwell
 {
 
 class circle
 {
-  public:
-    explicit circle(const point& coord);
-    const point& get_coord() const;
-    void set_coord(const point& coord);
-    void draw();
+public:
+    explicit circle(charge& chrg);
+
+    void move(const point& coord);
+    void draw(const Cairo::RefPtr<Cairo::Context>& ctx);
+
+    bool is_hint(const point& coord);
+
     void select();
     void unselect();
-  private:
-    charge _charge;
+
+private:
+    std::reference_wrapper<charge> _charge;
     bool _selected;
 };
 
-}
+} // namespace maxwell
+
