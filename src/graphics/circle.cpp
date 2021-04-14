@@ -15,31 +15,27 @@ void circle::move(const point& coord)
     _charge.get().set_coord(coord);
 }
 
-void circle::draw(const Cairo::RefPtr<Cairo::Context>& ctx)
+void circle::draw(const Cairo::RefPtr<Cairo::Context>& ctx) const
 {
     const context_guard guard(ctx);
-    if (_charge.get().get_value() >= 0) {
-        Gdk::Cairo::set_source_rgba(ctx, positive_charge_color);
-    } else {
-        Gdk::Cairo::set_source_rgba(ctx, negative_charge_color);
-    }
-
     const auto& coord = _charge.get().get_coord();
+    if (_charge.get().get_value() >= 0) {
+        _selected ? Gdk::Cairo::set_source_rgba(ctx, positive_charge_color_selected)
+                  : Gdk::Cairo::set_source_rgba(ctx, positive_charge_color);
+    } else {
+        _selected ? Gdk::Cairo::set_source_rgba(ctx, negative_charge_color_selected)
+                  : Gdk::Cairo::set_source_rgba(ctx, negative_charge_color);
+    }
     ctx->arc(coord.x, coord.y, charge_radius, 0.0f, 2 * M_PI);
     ctx->fill();
 }
 
-void circle::select()
+void circle::select(bool val)
 {
-    _selected = true;
+    _selected = val;
 }
 
-void circle::unselect()
-{
-    _selected = false;
-}
-
-bool circle::is_hint(const point& coord)
+bool circle::is_hint(const point& coord) const
 {
     const auto delta = _charge.get().get_coord() - coord;
     return delta.module() <= charge_radius;

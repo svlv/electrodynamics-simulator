@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graphics/arrow.hpp"
+#include "graphics/circle.hpp"
 #include "physics/field.hpp"
 #include "utils.hpp"
 #include <gtkmm/drawingarea.h>
@@ -18,7 +19,6 @@ class Canvas : public Gtk::DrawingArea
 
   protected:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
-
     bool on_button_press_event(GdkEventButton* event) override;
     bool on_button_release_event(GdkEventButton* event) override;
     bool on_key_press_event(GdkEventKey* event) override;
@@ -31,12 +31,15 @@ class Canvas : public Gtk::DrawingArea
     // TODO is temporal method
     void draw_line(point pos, bool positive, const size& sz,
                    const Cairo::RefPtr<Cairo::Context>& cr);
+    void _draw_charges(const Cairo::RefPtr<Cairo::Context>& ctx);
 
     charges _charges;
     field _field;
     bool _draw_lines = false;
-    bool _draw_lines_flag = true;
+    bool _draw_arrows_flag = true;
     std::vector<arrow> _arrows;
+    std::vector<circle> _circles;
+    circle* _selected_circle;
 };
 
 } // namespace maxwell

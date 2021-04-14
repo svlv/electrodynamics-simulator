@@ -11,7 +11,7 @@
 namespace maxwell
 {
 
-Canvas::Canvas() : _field(_charges)
+Canvas::Canvas() : _field(_charges), _selected_circle(nullptr)
 {
     add_events(Gdk::BUTTON_PRESS_MASK);
     add_events(Gdk::BUTTON_RELEASE_MASK);
@@ -39,7 +39,7 @@ void Canvas::_init_arrows(int width, int height)
 void Canvas::_draw_arrows(const size& sz,
                           const Cairo::RefPtr<Cairo::Context>& cr)
 {
-    if (_draw_lines_flag && !_charges.empty()) {
+    if (_draw_arrows_flag && !_charges.empty()) {
         const auto guard = context_guard(cr);
         Gdk::Cairo::set_source_rgba(cr, arrow_color);
 
@@ -94,6 +94,13 @@ void Canvas::draw_line(point pos, bool positive, const size& sz,
     cr->stroke();
 }
 
+void Canvas::_draw_charges(const Cairo::RefPtr<Cairo::Context>& ctx)
+{
+    for (const auto& circle : _circles) {
+      circle.draw(ctx);
+    }
+}
+
 bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     Gtk::Allocation allocation = get_allocation();
@@ -136,22 +143,7 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     }
     cr->restore();
 
-    // draw charges
-    cr->save();
-
-    auto draw_arc = [&cr](const charge& charge) {
-        const auto& charge_coord = charge.get_coord();
-        cr->arc(charge_coord.x, charge_coord.y, 10.0f, 0.0f, 2 * M_PI);
-        cr->fill();
-    };
-
-    Gdk::Cairo::set_source_rgba(cr, positive_charge_color);
-    std::for_each(pos_charges.cbegin(), pos_charges.cend(), draw_arc);
-
-    Gdk::Cairo::set_source_rgba(cr, negative_charge_color);
-    std::for_each(neg_charges.cbegin(), neg_charges.cend(), draw_arc);
-
-    cr->restore();
+    _draw_charges(cr);
 
     return true;
 }
@@ -161,31 +153,30 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
     if (event->type == GDK_BUTTON_PRESS) {
         const auto coord = point(event->x, event->y);
         if (event->button == 1) {
-            auto* selected_charge = _charges.get_hint(coord, charge::type::any, 10.0);
-            if (selected_charge) {
-                _charges.set_selected(selected_charge);
+            auto it = std::find_if(_circles.begin(), _circles.end(), [&coord](const auto& circle){
+                return circle.is_hint(coord);
+            });
+            if (it != _circles.end()) {
+              _selected_circle = &(*it);
             } else {
             _charges.emplace_back(charge::type::positive,
                                   coord, 1.0);
+            _circles.emplace_back(std::ref(_charges.get_positive_charges().back()));
             queue_draw();
             }
         } else if (event->button == 3) {
             _charges.emplace_back(charge::type::negative,
                                   coord, -1.0);
+            _circles.emplace_back(std::ref(_charges.get_negative_charges().back()));
             queue_draw();
         }
     }
     return false;
 }
 
-
 bool Canvas::on_button_release_event(GdkEventButton* event)
 {
-  _charges.set_selected(nullptr);
-  
-        for (auto& arr : _arrows) {
-            arr.select(false);
-        }
+  _selected_circle = nullptr;
   return false;
 }
 
@@ -196,9 +187,11 @@ bool Canvas::on_key_press_event(GdkEventKey* event)
         queue_draw();
     } else if (event->keyval == GDK_KEY_c) {
         _charges.clear();
+        _circles.clear();
+        _selected_circle = nullptr;
         queue_draw();
     } else if (event->keyval == GDK_KEY_a) {
-        _draw_lines_flag = !_draw_lines_flag;
+        _draw_arrows_flag = !_draw_arrows_flag;
         queue_draw();
     }
     return false;
@@ -207,12 +200,14 @@ bool Canvas::on_key_press_event(GdkEventKey* event)
 bool Canvas::on_motion_notify_event(GdkEventMotion* event)
 {
     const auto coord = point(event->x, event->y);
-    auto* chrg = _charges.get_selected();
-    if (chrg) {
-      chrg->set_coord(coord);
+    if (_selected_circle) {
+      _selected_circle->move(coord);
     } else {
         for (auto& arr : _arrows) {
             arr.select(arr.is_hint(coord));
+        }
+        for (auto& circle : _circles) {
+            circle.select(circle.is_hint(coord));
         }
     }
     queue_draw();

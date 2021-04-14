@@ -9,7 +9,9 @@ namespace maxwell
 const Gdk::RGBA bg_color("#ffefd7");
 const Gdk::RGBA lines_color("#872323");
 const Gdk::RGBA positive_charge_color("#ff0000");
+const Gdk::RGBA positive_charge_color_selected("#780000");
 const Gdk::RGBA negative_charge_color("#0000ff");
+const Gdk::RGBA negative_charge_color_selected("#000078");
 
 const Gdk::RGBA arrow_color("#004156");
 const Gdk::RGBA highlight_arrow_color("#2398AB");

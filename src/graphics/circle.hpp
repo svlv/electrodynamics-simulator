@@ -12,12 +12,11 @@ public:
     explicit circle(charge& chrg);
 
     void move(const point& coord);
-    void draw(const Cairo::RefPtr<Cairo::Context>& ctx);
+    void draw(const Cairo::RefPtr<Cairo::Context>& ctx) const;
 
-    bool is_hint(const point& coord);
+    bool is_hint(const point& coord) const;
 
-    void select();
-    void unselect();
+    void select(bool val);
 
 private:
     std::reference_wrapper<charge> _charge;
