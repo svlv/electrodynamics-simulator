@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graphics/point.hpp"
+#include <memory>
 
 namespace maxwell
 {
@@ -19,5 +20,7 @@ class charge
     point _coord;
     double _value;
 };
+
+using charge_ptr = std::shared_ptr<charge>;
 
 } // namespace maxwell

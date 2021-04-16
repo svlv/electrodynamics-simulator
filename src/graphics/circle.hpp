@@ -9,7 +9,7 @@ namespace maxwell
 class circle
 {
 public:
-    explicit circle(charge& chrg);
+    explicit circle(const charge_ptr& chrg);
 
     void move(const point& coord);
     void draw(const Cairo::RefPtr<Cairo::Context>& ctx) const;
@@ -19,7 +19,7 @@ public:
     void select(bool val);
 
 private:
-    std::reference_wrapper<charge> _charge;
+    charge_ptr _charge;
     bool _selected;
 };
 

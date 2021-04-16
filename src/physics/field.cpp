@@ -17,9 +17,9 @@ double field::get_angle(const point& coord) const
 
 double field::get_Ex(const point& coord) const
 {
-    const auto sumEx = [&coord](double Ex, const charge& charge) -> double {
-        const auto delta = coord - charge.get_coord();
-        return Ex + charge.get_value() * delta.x / pow(delta.module(), 3.0);
+    const auto sumEx = [&coord](double Ex, const auto& charge) -> double {
+        const auto delta = coord - charge->get_coord();
+        return Ex + charge->get_value() * delta.x / pow(delta.module(), 3.0);
     };
 
     const auto& pos = _charges.get().get_positive_charges();
@@ -31,9 +31,9 @@ double field::get_Ex(const point& coord) const
 
 double field::get_Ey(const point& coord) const
 {
-    auto sumEy = [&coord](double Ey, const charge& charge) -> double {
-        const auto delta = coord - charge.get_coord();
-        return Ey + charge.get_value() * delta.y / pow(delta.module(), 3.0);
+    auto sumEy = [&coord](double Ey, const auto& charge) -> double {
+        const auto delta = coord - charge->get_coord();
+        return Ey + charge->get_value() * delta.y / pow(delta.module(), 3.0);
     };
 
     const auto& pos = _charges.get().get_positive_charges();
@@ -61,3 +61,4 @@ double field::get_sin(const point& coord) const
 }
 
 } // namespace maxwell
+

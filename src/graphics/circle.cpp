@@ -6,20 +6,20 @@
 namespace maxwell
 {
 
-circle::circle(charge& chrg) : _charge(chrg)
+circle::circle(const std::shared_ptr<charge>& chrg) : _charge(chrg)
 {
 }
 
 void circle::move(const point& coord)
 {
-    _charge.get().set_coord(coord);
+    _charge->set_coord(coord);
 }
 
 void circle::draw(const Cairo::RefPtr<Cairo::Context>& ctx) const
 {
     const context_guard guard(ctx);
-    const auto& coord = _charge.get().get_coord();
-    if (_charge.get().get_value() >= 0) {
+    const auto& coord = _charge->get_coord();
+    if (_charge->get_value() >= 0) {
         _selected ? Gdk::Cairo::set_source_rgba(ctx, positive_charge_color_selected)
                   : Gdk::Cairo::set_source_rgba(ctx, positive_charge_color);
     } else {
@@ -37,7 +37,7 @@ void circle::select(bool val)
 
 bool circle::is_hint(const point& coord) const
 {
-    const auto delta = _charge.get().get_coord() - coord;
+    const auto delta = _charge->get_coord() - coord;
     return delta.module() <= charge_radius;
 }
 

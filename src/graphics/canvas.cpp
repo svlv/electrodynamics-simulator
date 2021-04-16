@@ -72,7 +72,7 @@ void Canvas::draw_line(point pos, bool positive, const size& sz,
     // iteration counter is used because sometimes it's impossible for line to
     // leave a room
     for (size_t i = 0; i < 1000 && valid_position(); ++i) {
-        auto* end = positive ? _charges.get_hint(pos, charge::type::negative, 10.0)
+        auto end = positive ? _charges.get_hint(pos, charge::type::negative, 10.0)
                             : _charges.get_hint(pos, charge::type::positive, 10.0);
         if (end) {
             const auto& coord = end->get_coord();
@@ -131,13 +131,13 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     if (_draw_lines) {
         for (const auto& charge : pos_charges) {
             for (size_t idx = 0; idx < lines_per_charge; ++idx) {
-                draw_line(get_begin(charge.get_coord(), idx), true, sz, cr);
+                draw_line(get_begin(charge->get_coord(), idx), true, sz, cr);
             }
         }
 
         for (const auto& charge : neg_charges) {
             for (size_t idx = 0; idx < lines_per_charge; ++idx) {
-                draw_line(get_begin(charge.get_coord(), idx), false, sz, cr);
+                draw_line(get_begin(charge->get_coord(), idx), false, sz, cr);
             }
         }
     }
@@ -161,13 +161,13 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
             } else {
             _charges.emplace_back(charge::type::positive,
                                   coord, 1.0);
-            _circles.emplace_back(std::ref(_charges.get_positive_charges().back()));
+            _circles.emplace_back(_charges.get_positive_charges().back());
             queue_draw();
             }
         } else if (event->button == 3) {
             _charges.emplace_back(charge::type::negative,
                                   coord, -1.0);
-            _circles.emplace_back(std::ref(_charges.get_negative_charges().back()));
+            _circles.emplace_back(_charges.get_negative_charges().back());
             queue_draw();
         }
     }
