@@ -1,6 +1,7 @@
 #include "canvas.hpp"
 
 #include "arrow.hpp"
+#include "graphics/curve.hpp"
 #include "constants.hpp"
 #include "context_guard.hpp"
 #include "point.hpp"
@@ -68,16 +69,20 @@ void Canvas::draw_line(point pos, bool positive, const size& sz,
         return pos.x > 0 && pos.x < sz.width && pos.y > 0 && pos.y < sz.height;
     };
 
-    cr->move_to(pos.x, pos.y);
+    //cr->move_to(pos.x, pos.y);
+    curve crv;
+    crv.add_point(pos);
     // iteration counter is used because sometimes it's impossible for line to
     // leave a room
+    
     for (size_t i = 0; i < 1000 && valid_position(); ++i) {
         auto end = positive
                        ? _charges.get_hint(pos, charge::type::negative, 10.0)
                        : _charges.get_hint(pos, charge::type::positive, 10.0);
         if (end) {
             const auto& coord = end->get_coord();
-            cr->line_to(coord.x, coord.y);
+            crv.add_point(coord);
+            //cr->line_to(coord.x, coord.y);
             break;
         }
         const auto delta = point(_field.get_cos(pos) * line_delta,
@@ -90,9 +95,11 @@ void Canvas::draw_line(point pos, bool positive, const size& sz,
         } else {
             pos -= delta;
         }
-        cr->line_to(pos.x, pos.y);
+        crv.add_point(pos);
+        //cr->line_to(pos.x, pos.y);
     }
-    cr->stroke();
+    //cr->stroke();
+    crv.draw(cr);
 }
 
 void Canvas::_draw_charges(const Cairo::RefPtr<Cairo::Context>& ctx)

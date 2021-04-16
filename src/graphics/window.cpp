@@ -5,7 +5,7 @@ namespace maxwell
 
 MainWindow::MainWindow()
 {
-    set_title("Electrodynamics Simulator");
+    set_title("Elfield");
     set_size_request(200, 200);
     set_border_width(10);
 
