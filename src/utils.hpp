@@ -5,9 +5,7 @@
 namespace maxwell
 {
 
-
-struct size
-{
+struct size {
     size(double w, double h) : width(w), height(h) {}
     double width;
     double height;

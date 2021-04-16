@@ -9,13 +9,14 @@ namespace maxwell
 class charge
 {
   public:
-    enum class type { negative = 0, positive = 1 , any = 2};
+    enum class type { negative = 0, positive = 1, any = 2 };
 
     charge(const point& coordinates_, double value_);
 
     const point& get_coord() const;
     void set_coord(const point& coord);
     double get_value() const;
+
   private:
     point _coord;
     double _value;

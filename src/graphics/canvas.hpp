@@ -2,11 +2,11 @@
 
 #include "graphics/arrow.hpp"
 #include "graphics/circle.hpp"
+#include "physics/charges.hpp"
 #include "physics/field.hpp"
 #include "utils.hpp"
 #include <gtkmm/drawingarea.h>
 #include <vector>
-#include "physics/charges.hpp"
 
 namespace maxwell
 {

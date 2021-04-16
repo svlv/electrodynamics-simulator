@@ -1,9 +1,9 @@
 #pragma once
 
 #include "charge.hpp"
-#include <vector>
-#include <optional>
 #include <memory>
+#include <optional>
+#include <vector>
 
 namespace maxwell
 {
@@ -17,10 +17,12 @@ class charges
     {
         switch (type) {
         case charge::type::positive:
-            _positive_charges.emplace_back(std::make_shared<charge>(std::forward<Ts>(args)...));
+            _positive_charges.emplace_back(
+                std::make_shared<charge>(std::forward<Ts>(args)...));
             break;
         case charge::type::negative:
-            _negative_charges.emplace_back(std::make_shared<charge>(std::forward<Ts>(args)...));
+            _negative_charges.emplace_back(
+                std::make_shared<charge>(std::forward<Ts>(args)...));
             break;
         }
     }
@@ -41,4 +43,3 @@ class charges
 };
 
 } // namespace maxwell
-

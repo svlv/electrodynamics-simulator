@@ -39,10 +39,8 @@ double field::get_Ey(const point& coord) const
     const auto& pos = _charges.get().get_positive_charges();
     const auto& neg = _charges.get().get_negative_charges();
 
-    return std::accumulate(pos.cbegin(), pos.cend(),
-                           0.0, sumEy) +
-           std::accumulate(neg.cbegin(), neg.cend(),
-                           0.0, sumEy);
+    return std::accumulate(pos.cbegin(), pos.cend(), 0.0, sumEy) +
+           std::accumulate(neg.cbegin(), neg.cend(), 0.0, sumEy);
 }
 
 double field::get_E(const point& coord) const
@@ -61,4 +59,3 @@ double field::get_sin(const point& coord) const
 }
 
 } // namespace maxwell
-

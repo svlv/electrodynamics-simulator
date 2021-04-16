@@ -2,9 +2,9 @@
 
 #include "arrow.hpp"
 #include "constants.hpp"
+#include "context_guard.hpp"
 #include "point.hpp"
 #include "utils.hpp"
-#include "context_guard.hpp"
 
 #include <gtkmm.h>
 #include <iostream>
@@ -72,8 +72,9 @@ void Canvas::draw_line(point pos, bool positive, const size& sz,
     // iteration counter is used because sometimes it's impossible for line to
     // leave a room
     for (size_t i = 0; i < 1000 && valid_position(); ++i) {
-        auto end = positive ? _charges.get_hint(pos, charge::type::negative, 10.0)
-                            : _charges.get_hint(pos, charge::type::positive, 10.0);
+        auto end = positive
+                       ? _charges.get_hint(pos, charge::type::negative, 10.0)
+                       : _charges.get_hint(pos, charge::type::positive, 10.0);
         if (end) {
             const auto& coord = end->get_coord();
             cr->line_to(coord.x, coord.y);
@@ -97,7 +98,7 @@ void Canvas::draw_line(point pos, bool positive, const size& sz,
 void Canvas::_draw_charges(const Cairo::RefPtr<Cairo::Context>& ctx)
 {
     for (const auto& circle : _circles) {
-      circle.draw(ctx);
+        circle.draw(ctx);
     }
 }
 
@@ -153,20 +154,18 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
     if (event->type == GDK_BUTTON_PRESS) {
         const auto coord = point(event->x, event->y);
         if (event->button == 1) {
-            auto it = std::find_if(_circles.begin(), _circles.end(), [&coord](const auto& circle){
-                return circle.is_hint(coord);
-            });
+            auto it = std::find_if(
+                _circles.begin(), _circles.end(),
+                [&coord](const auto& circle) { return circle.is_hint(coord); });
             if (it != _circles.end()) {
-              _selected_circle = &(*it);
+                _selected_circle = &(*it);
             } else {
-            _charges.emplace_back(charge::type::positive,
-                                  coord, 1.0);
-            _circles.emplace_back(_charges.get_positive_charges().back());
-            queue_draw();
+                _charges.emplace_back(charge::type::positive, coord, 1.0);
+                _circles.emplace_back(_charges.get_positive_charges().back());
+                queue_draw();
             }
         } else if (event->button == 3) {
-            _charges.emplace_back(charge::type::negative,
-                                  coord, -1.0);
+            _charges.emplace_back(charge::type::negative, coord, -1.0);
             _circles.emplace_back(_charges.get_negative_charges().back());
             queue_draw();
         }
@@ -176,8 +175,8 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
 
 bool Canvas::on_button_release_event(GdkEventButton* event)
 {
-  _selected_circle = nullptr;
-  return false;
+    _selected_circle = nullptr;
+    return false;
 }
 
 bool Canvas::on_key_press_event(GdkEventKey* event)
@@ -201,7 +200,7 @@ bool Canvas::on_motion_notify_event(GdkEventMotion* event)
 {
     const auto coord = point(event->x, event->y);
     if (_selected_circle) {
-      _selected_circle->move(coord);
+        _selected_circle->move(coord);
     } else {
         for (auto& arr : _arrows) {
             arr.select(arr.is_hint(coord));

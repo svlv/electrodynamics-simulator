@@ -43,9 +43,6 @@ point operator-(const point& lhs, const point& rhs)
     return point(lhs.x - rhs.x, lhs.y - rhs.y);
 }
 
-double point::module() const
-{
-    return pow(pow(x, 2.0) + pow(y, 2.0), 0.5);
-}
+double point::module() const { return pow(pow(x, 2.0) + pow(y, 2.0), 0.5); }
 
 } // namespace maxwell

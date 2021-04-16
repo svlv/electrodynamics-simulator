@@ -8,7 +8,7 @@ namespace maxwell
 
 class circle
 {
-public:
+  public:
     explicit circle(const charge_ptr& chrg);
 
     void move(const point& coord);
@@ -18,10 +18,9 @@ public:
 
     void select(bool val);
 
-private:
+  private:
     charge_ptr _charge;
     bool _selected;
 };
 
 } // namespace maxwell
-
