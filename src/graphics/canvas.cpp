@@ -70,8 +70,7 @@ void Canvas::draw_line(point pos, bool positive, const size& sz,
     };
 
     //cr->move_to(pos.x, pos.y);
-    curve crv;
-    crv.add_point(pos);
+    curve crv(pos);
     // iteration counter is used because sometimes it's impossible for line to
     // leave a room
     
@@ -99,6 +98,7 @@ void Canvas::draw_line(point pos, bool positive, const size& sz,
         //cr->line_to(pos.x, pos.y);
     }
     //cr->stroke();
+    crv.fill();
     crv.draw(cr);
 }
 
