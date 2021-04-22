@@ -34,8 +34,8 @@ class charges
     const data_t& get_positive_charges() const;
     const data_t& get_negative_charges() const;
 
-    data_t& get_positive_charges();
-    data_t& get_negative_charges();
+    //data_t& get_positive_charges();
+    //data_t& get_negative_charges();
 
   private:
     data_t _positive_charges;

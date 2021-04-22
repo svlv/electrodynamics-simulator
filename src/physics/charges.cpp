@@ -62,8 +62,8 @@ const charges::data_t& charges::get_negative_charges() const
     return _negative_charges;
 }
 
-charges::data_t& charges::get_positive_charges() { return _positive_charges; }
-
-charges::data_t& charges::get_negative_charges() { return _negative_charges; }
-
+//charges::data_t& charges::get_positive_charges() { return _positive_charges; }
+//
+//charges::data_t& charges::get_negative_charges() { return _negative_charges; }
+//
 } // namespace maxwell

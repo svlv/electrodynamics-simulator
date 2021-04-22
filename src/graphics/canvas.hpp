@@ -7,6 +7,7 @@
 #include "utils.hpp"
 #include <gtkmm/drawingarea.h>
 #include <vector>
+#include "graphics/base_line.hpp"
 
 namespace maxwell
 {
@@ -27,19 +28,26 @@ class Canvas : public Gtk::DrawingArea
 
   private:
     void _init_arrows(int width, int height);
+    void _init_lines();
+    base_line_uptr _make_line(point pos, bool positive, const size& sz);
     void _draw_arrows(const size& sz, const Cairo::RefPtr<Cairo::Context>& cr);
     // TODO is temporal method
     void draw_line(point pos, bool positive, const size& sz,
                    const Cairo::RefPtr<Cairo::Context>& cr);
     void _draw_charges(const Cairo::RefPtr<Cairo::Context>& ctx);
+    void _draw_lines(const Cairo::RefPtr<Cairo::Context>& cr);
 
     charges _charges;
     field _field;
-    bool _draw_lines = false;
+    bool _draw_lines_flag = false;
     bool _draw_arrows_flag = true;
     std::vector<arrow> _arrows;
     std::vector<circle> _circles;
+    std::vector<base_line_uptr> _lines;
     circle* _selected_circle;
+
+    base_line::type _line_type = base_line::type::curve;
+    double _line_delta = 10.0;
 };
 
 } // namespace maxwell
