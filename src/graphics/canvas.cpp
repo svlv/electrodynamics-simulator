@@ -1,10 +1,10 @@
 #include "canvas.hpp"
 
 #include "arrow.hpp"
-#include "graphics/curve.hpp"
-#include "graphics/line.hpp"
 #include "constants.hpp"
 #include "context_guard.hpp"
+#include "graphics/curve.hpp"
+#include "graphics/line.hpp"
 #include "point.hpp"
 #include "utils.hpp"
 
@@ -44,14 +44,13 @@ base_line_uptr Canvas::_make_line(point pos, bool positive, const size& sz)
         return pos.x > 0 && pos.x < sz.width && pos.y > 0 && pos.y < sz.height;
     };
     auto crv = [&]() -> base_line_uptr {
-      switch (_line_type)
-      {
+        switch (_line_type) {
         case base_line::type::line:
-          return std::make_unique<line>(pos);
+            return std::make_unique<line>(pos);
         case base_line::type::curve:
-          return std::make_unique<curve>(pos);
-      }
-      return nullptr;
+            return std::make_unique<curve>(pos);
+        }
+        return nullptr;
     }();
     for (size_t i = 0; i < 1000 && valid_position(); ++i) {
         auto end = positive
@@ -90,12 +89,14 @@ void Canvas::_init_lines()
     };
     for (const auto& charge : _charges.get_positive_charges()) {
         for (size_t idx = 0; idx < lines_per_charge; ++idx) {
-            _lines.emplace_back(_make_line(get_begin(charge->get_coord(), idx), true, sz));
+            _lines.emplace_back(
+                _make_line(get_begin(charge->get_coord(), idx), true, sz));
         }
     }
     for (const auto& charge : _charges.get_negative_charges()) {
         for (size_t idx = 0; idx < lines_per_charge; ++idx) {
-            _lines.emplace_back(_make_line(get_begin(charge->get_coord(), idx), false, sz));
+            _lines.emplace_back(
+                _make_line(get_begin(charge->get_coord(), idx), false, sz));
         }
     }
 }
@@ -135,7 +136,7 @@ void Canvas::_draw_lines(const Cairo::RefPtr<Cairo::Context>& cr)
         const auto guard = context_guard(cr);
         cr->set_line_width(line_width);
         for (const auto& line : _lines) {
-          line->draw(cr);
+            line->draw(cr);
         }
     }
 }
@@ -212,20 +213,25 @@ bool Canvas::on_key_press_event(GdkEventKey* event)
         _draw_arrows_flag = !_draw_arrows_flag;
         queue_draw();
     } else if (event->keyval == GDK_KEY_t) {
-        _line_type = _line_type == base_line::type::line ? base_line::type::curve : base_line::type::line;
+        _line_type = _line_type == base_line::type::line
+                         ? base_line::type::curve
+                         : base_line::type::line;
         _init_lines();
         queue_draw();
-        std::cout << "Line type has been changed to " << (int)_line_type << std::endl;
+        std::cout << "Line type has been changed to " << (int)_line_type
+                  << std::endl;
     } else if (event->keyval == GDK_KEY_j && _line_delta > 2.0) {
         _line_delta -= 2.;
         _init_lines();
         queue_draw();
-        std::cout << "Delta line has been changed to " << _line_delta << std::endl;
+        std::cout << "Delta line has been changed to " << _line_delta
+                  << std::endl;
     } else if (event->keyval == GDK_KEY_k && _line_delta <= 20.0) {
         _line_delta += 2.;
         _init_lines();
         queue_draw();
-        std::cout << "Delta line has been changed to " << _line_delta << std::endl;
+        std::cout << "Delta line has been changed to " << _line_delta
+                  << std::endl;
     }
     return false;
 }

@@ -1,13 +1,13 @@
 #pragma once
 
 #include "graphics/arrow.hpp"
+#include "graphics/base_line.hpp"
 #include "graphics/circle.hpp"
 #include "physics/charges.hpp"
 #include "physics/field.hpp"
 #include "utils.hpp"
 #include <gtkmm/drawingarea.h>
 #include <vector>
-#include "graphics/base_line.hpp"
 
 namespace maxwell
 {
