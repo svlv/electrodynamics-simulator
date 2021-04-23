@@ -21,6 +21,8 @@ class field
     double get_cos(const point& coord) const;
     double get_sin(const point& coord) const;
 
+    double get_potential(const point& coord) const;
+
   private:
     std::reference_wrapper<const charges> _charges;
 };

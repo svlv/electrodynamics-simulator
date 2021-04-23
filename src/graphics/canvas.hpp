@@ -31,11 +31,10 @@ class Canvas : public Gtk::DrawingArea
     void _init_lines();
     base_line_uptr _make_line(point pos, bool positive, const size& sz);
     void _draw_arrows(const size& sz, const Cairo::RefPtr<Cairo::Context>& cr);
-    // TODO is temporal method
-    void draw_line(point pos, bool positive, const size& sz,
-                   const Cairo::RefPtr<Cairo::Context>& cr);
     void _draw_charges(const Cairo::RefPtr<Cairo::Context>& ctx);
     void _draw_lines(const Cairo::RefPtr<Cairo::Context>& cr);
+    void _draw_background(const Cairo::RefPtr<Cairo::Context>& cr);
+    void _draw_grid(const Cairo::RefPtr<Cairo::Context>& cr);
 
     charges _charges;
     field _field;

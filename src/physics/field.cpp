@@ -58,4 +58,18 @@ double field::get_sin(const point& coord) const
     return get_Ey(coord) / get_E(coord);
 }
 
+double field::get_potential(const point& coord) const
+{
+    auto sum = [&coord](double phi, const auto& charge) -> double {
+        const auto delta = coord - charge->get_coord();
+        return phi + charge->get_value() / delta.module();
+    };
+
+    const auto& pos = _charges.get().get_positive_charges();
+    const auto& neg = _charges.get().get_negative_charges();
+
+    return std::accumulate(pos.cbegin(), pos.cend(), 0.0, sum) +
+           std::accumulate(neg.cbegin(), neg.cend(), 0.0, sum);
+}
+
 } // namespace maxwell

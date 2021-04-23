@@ -5,6 +5,7 @@
 #include "context_guard.hpp"
 #include "graphics/curve.hpp"
 #include "graphics/line.hpp"
+#include "graphics/square.hpp"
 #include "point.hpp"
 #include "utils.hpp"
 
@@ -148,17 +149,55 @@ void Canvas::_draw_charges(const Cairo::RefPtr<Cairo::Context>& ctx)
     }
 }
 
+void Canvas::_draw_background(const Cairo::RefPtr<Cairo::Context>& ctx)
+{
+    const auto guard = context_guard(ctx);
+    Gdk::Cairo::set_source_rgba(ctx, bg_color);
+    ctx->paint();
+}
+
+void Canvas::_draw_grid(const Cairo::RefPtr<Cairo::Context>& ctx)
+{
+    const auto guard = context_guard(ctx);
+    const double delta = 10.0;
+    Gtk::Allocation allocation = get_allocation();
+    const auto sz = size(allocation.get_width(), allocation.get_height());
+    size_t x_count = sz.width / delta;
+    size_t y_count = sz.height / delta;
+    point coord(0.0, 0.0);
+
+    double min_phi = -0.01;
+    double max_phi = 0.01;
+
+    for (size_t x_idx = 0; x_idx < x_count; ++x_idx) {
+      for (size_t y_idx = 0; y_idx < y_count; ++y_idx) {
+        coord.y += delta;
+        const auto phi = _field.get_potential(coord);
+        Gdk::RGBA color;
+        if (phi > 0) {
+          auto op = phi / max_phi;
+          if (op > 0.7) op = 0.7;
+          color.set_rgba(1.0, 0.0, 0.0, op);
+        } else {
+          auto op = phi / min_phi;
+          if (op > 0.7) op = 0.7;
+          color.set_rgba(0.0, 0.0, 1.0, op);
+        }
+        square sq(coord, color);
+        sq.draw(ctx);
+      }
+      coord.x += delta;
+      coord.y = 0.0;
+    }
+}
+
 bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     Gtk::Allocation allocation = get_allocation();
     const auto sz = size(allocation.get_width(), allocation.get_height());
 
-    // draw background
-    cr->save();
-    Gdk::Cairo::set_source_rgba(cr, bg_color);
-    cr->paint();
-    cr->restore();
-
+    _draw_background(cr);
+    _draw_grid(cr);
     _draw_arrows(sz, cr);
     _draw_lines(cr);
     _draw_charges(cr);
