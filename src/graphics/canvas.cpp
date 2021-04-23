@@ -170,24 +170,26 @@ void Canvas::_draw_grid(const Cairo::RefPtr<Cairo::Context>& ctx)
     double max_phi = 0.01;
 
     for (size_t x_idx = 0; x_idx < x_count; ++x_idx) {
-      for (size_t y_idx = 0; y_idx < y_count; ++y_idx) {
-        coord.y += delta;
-        const auto phi = _field.get_potential(coord);
-        Gdk::RGBA color;
-        if (phi > 0) {
-          auto op = phi / max_phi;
-          if (op > 0.7) op = 0.7;
-          color.set_rgba(1.0, 0.0, 0.0, op);
-        } else {
-          auto op = phi / min_phi;
-          if (op > 0.7) op = 0.7;
-          color.set_rgba(0.0, 0.0, 1.0, op);
+        for (size_t y_idx = 0; y_idx < y_count; ++y_idx) {
+            coord.y += delta;
+            const auto phi = _field.get_potential(coord);
+            Gdk::RGBA color;
+            if (phi > 0) {
+                auto op = phi / max_phi;
+                if (op > 0.7)
+                    op = 0.7;
+                color.set_rgba(1.0, 0.0, 0.0, op);
+            } else {
+                auto op = phi / min_phi;
+                if (op > 0.7)
+                    op = 0.7;
+                color.set_rgba(0.0, 0.0, 1.0, op);
+            }
+            square sq(coord, color);
+            sq.draw(ctx);
         }
-        square sq(coord, color);
-        sq.draw(ctx);
-      }
-      coord.x += delta;
-      coord.y = 0.0;
+        coord.x += delta;
+        coord.y = 0.0;
     }
 }
 
