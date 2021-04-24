@@ -1,7 +1,7 @@
 # Elfield - Electric Field Simulator<br />Easy to install - Easy to demonstrate
 Simple graphic electric field simulator written on C++ using GTK+.
 <br />
-<img src="https://github.com/svlv/elfield/blob/master/.screenshots/highlight_arrow.png" alt="drawing" width="400"/>
+<img src="https://github.com/svlv/elfield/blob/master/.screenshots/potential.png" alt="drawing" width="400"/>
 
 # Build
 ```
@@ -13,23 +13,35 @@ make
 ```
 
 # Features
+* Drawing charges:
+    * Moving a charge under the cursor;
+    * Removing a charge under the cursor;
 * Drawing arrows to demonstrate electric field direction:
-    * It's possible to show or hide the arrows.
-    * Hightlighting arrows under the cursor with the corresponding line.
+    * Toggling the arrows;
+    * Hightlighting arrows under the cursor with the corresponding line;
 * Drawing electric field lines coming from positive to negative charges:
-    * It's possible to show or hide the lines.
-    * Moving a charge under the cursor.
+    * Toggling the lines;
+    * Choosing straight lines or bezier curves;
+    * Choosing line step drawing;
+* Drawing electric field potential
 
 # Mouse events
 | Event        | Action           |
 | ------------- |:-------------:|
-| Press right button | Add positive charge|
-| Press left button | Add negative charge|
+| Press right button | Add a positive charge|
+| Press left button | Add a negative charge|
+| Press right button and move cursor| Move a charge|
 
 # Keybindings
 | Key        | Action           |
 | ------------- |:-------------:|
 | `q`      | Quit simulator |
 | `c`      | Remove all charges |
-| `a`      | Draw / hide arrows |
-| `l`      | Draw / hide lines |
+| `a`      | Toggle arrows |
+| `l`      | Toggle lines |
+| `p`      | Toggle potential |
+| `x`      | Remove a charge under the cursor |
+| `t`      | Toggle straight line / bezier curve |
+| `j`      | Decrease line step for drawing |
+| `k`      | Increase line step for drawing |
+

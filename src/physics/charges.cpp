@@ -31,6 +31,7 @@ charge_ptr charges::get_hint(const point& coord, charge::type type, double dist)
         }
         return charge_ptr(nullptr);
     };
+
     charge_ptr res;
     switch (type) {
     case charge::type::negative: {
@@ -49,6 +50,7 @@ charge_ptr charges::get_hint(const point& coord, charge::type type, double dist)
         break;
     }
     }
+
     return res;
 }
 
@@ -62,10 +64,19 @@ const charges::data_t& charges::get_negative_charges() const
     return _negative_charges;
 }
 
-// charges::data_t& charges::get_positive_charges() { return _positive_charges;
-// }
-//
-// charges::data_t& charges::get_negative_charges() { return _negative_charges;
-// }
-//
+void charges::erase(charge_ptr chrg)
+{
+    const auto erase_chrg = [&](data_t& charges) {
+        const auto it = std::find(charges.cbegin(), charges.cend(), chrg);
+        if (it != charges.cend()) {
+          charges.erase(it);
+        }
+    };
+    if (chrg->get_value() > 0.0) {
+       erase_chrg(_positive_charges);
+    } else {
+        erase_chrg(_negative_charges);
+    }
+}
+
 } // namespace maxwell

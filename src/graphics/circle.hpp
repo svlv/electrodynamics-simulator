@@ -17,6 +17,9 @@ class circle
     bool is_hint(const point& coord) const;
 
     void select(bool val);
+    bool is_selected() const;
+
+    charge_ptr get_charge() const;
 
   private:
     charge_ptr _charge;

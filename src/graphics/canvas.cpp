@@ -156,36 +156,42 @@ void Canvas::_draw_background(const Cairo::RefPtr<Cairo::Context>& ctx)
     ctx->paint();
 }
 
-void Canvas::_draw_grid(const Cairo::RefPtr<Cairo::Context>& ctx)
+void Canvas::_draw_potential(const Cairo::RefPtr<Cairo::Context>& ctx)
 {
+    if (_charges.empty() || !_draw_potential_flag) {
+      return;
+    }
     const auto guard = context_guard(ctx);
     const double delta = 10.0;
     Gtk::Allocation allocation = get_allocation();
     const auto sz = size(allocation.get_width(), allocation.get_height());
     size_t x_count = sz.width / delta;
     size_t y_count = sz.height / delta;
-    point coord(0.0, 0.0);
 
-    double min_phi = -0.01;
-    double max_phi = 0.01;
+    const auto get_color = [&](double value)
+    {
+        const double min_e = -0.01;
+        const double max_e = 0.01;
+        Gdk::RGBA color;
+        if (value < 0.0) {
+          auto portion = value / min_e;
+          if (portion > 1.0) portion = 1.0;
+          color.set_rgba(0.0, 1 - portion, portion, .7);
+          return color;
+        } else {
+          auto portion = value / max_e;
+          if (portion > 1.0) portion = 1.0;
+          color.set_rgba(portion, 1 - portion, 0.0, .7);
+        }
+        return color;
+    };
 
-    for (size_t x_idx = 0; x_idx < x_count; ++x_idx) {
+   point coord(0.0, 0.0);
+   for (size_t x_idx = 0; x_idx < x_count; ++x_idx) {
         for (size_t y_idx = 0; y_idx < y_count; ++y_idx) {
             coord.y += delta;
-            const auto phi = _field.get_potential(coord);
-            Gdk::RGBA color;
-            if (phi > 0) {
-                auto op = phi / max_phi;
-                if (op > 0.7)
-                    op = 0.7;
-                color.set_rgba(1.0, 0.0, 0.0, op);
-            } else {
-                auto op = phi / min_phi;
-                if (op > 0.7)
-                    op = 0.7;
-                color.set_rgba(0.0, 0.0, 1.0, op);
-            }
-            square sq(coord, color);
+            const auto e = _field.get_potential(coord);
+            square sq(coord, get_color(e));
             sq.draw(ctx);
         }
         coord.x += delta;
@@ -199,7 +205,7 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     const auto sz = size(allocation.get_width(), allocation.get_height());
 
     _draw_background(cr);
-    _draw_grid(cr);
+    _draw_potential(cr);
     _draw_arrows(sz, cr);
     _draw_lines(cr);
     _draw_charges(cr);
@@ -273,6 +279,18 @@ bool Canvas::on_key_press_event(GdkEventKey* event)
         queue_draw();
         std::cout << "Delta line has been changed to " << _line_delta
                   << std::endl;
+    } else if (event->keyval == GDK_KEY_x) {
+        const auto it = std::find_if(_circles.cbegin(), _circles.cend(), [](const auto& circle) { return circle.is_selected(); });
+        if (it != _circles.cend()) {
+             _charges.erase(it->get_charge());
+             _circles.erase(it);
+            _selected_circle = nullptr;
+            _init_lines();
+            queue_draw();
+        }
+    } else if (event->keyval == GDK_KEY_p) {
+      _draw_potential_flag = !_draw_potential_flag;
+      queue_draw();
     }
     return false;
 }

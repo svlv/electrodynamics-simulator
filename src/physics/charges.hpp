@@ -28,6 +28,7 @@ class charges
     }
     void clear();
     bool empty();
+    void erase(charge_ptr chrg);
 
     charge_ptr get_hint(const point& coord, charge::type type, double dist);
 

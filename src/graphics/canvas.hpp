@@ -34,12 +34,13 @@ class Canvas : public Gtk::DrawingArea
     void _draw_charges(const Cairo::RefPtr<Cairo::Context>& ctx);
     void _draw_lines(const Cairo::RefPtr<Cairo::Context>& cr);
     void _draw_background(const Cairo::RefPtr<Cairo::Context>& cr);
-    void _draw_grid(const Cairo::RefPtr<Cairo::Context>& cr);
+    void _draw_potential(const Cairo::RefPtr<Cairo::Context>& cr);
 
     charges _charges;
     field _field;
     bool _draw_lines_flag = false;
     bool _draw_arrows_flag = true;
+    bool _draw_potential_flag = true;
     std::vector<arrow> _arrows;
     std::vector<circle> _circles;
     std::vector<base_line_uptr> _lines;
