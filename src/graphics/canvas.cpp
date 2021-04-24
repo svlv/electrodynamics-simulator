@@ -159,7 +159,7 @@ void Canvas::_draw_background(const Cairo::RefPtr<Cairo::Context>& ctx)
 void Canvas::_draw_potential(const Cairo::RefPtr<Cairo::Context>& ctx)
 {
     if (_charges.empty() || !_draw_potential_flag) {
-      return;
+        return;
     }
     const auto guard = context_guard(ctx);
     const double delta = 10.0;
@@ -168,26 +168,27 @@ void Canvas::_draw_potential(const Cairo::RefPtr<Cairo::Context>& ctx)
     size_t x_count = sz.width / delta;
     size_t y_count = sz.height / delta;
 
-    const auto get_color = [&](double value)
-    {
+    const auto get_color = [&](double value) {
         const double min_e = -0.01;
         const double max_e = 0.01;
         Gdk::RGBA color;
         if (value < 0.0) {
-          auto portion = value / min_e;
-          if (portion > 1.0) portion = 1.0;
-          color.set_rgba(0.0, 1 - portion, portion, .7);
-          return color;
+            auto portion = value / min_e;
+            if (portion > 1.0)
+                portion = 1.0;
+            color.set_rgba(0.0, 1 - portion, portion, .7);
+            return color;
         } else {
-          auto portion = value / max_e;
-          if (portion > 1.0) portion = 1.0;
-          color.set_rgba(portion, 1 - portion, 0.0, .7);
+            auto portion = value / max_e;
+            if (portion > 1.0)
+                portion = 1.0;
+            color.set_rgba(portion, 1 - portion, 0.0, .7);
         }
         return color;
     };
 
-   point coord(0.0, 0.0);
-   for (size_t x_idx = 0; x_idx < x_count; ++x_idx) {
+    point coord(0.0, 0.0);
+    for (size_t x_idx = 0; x_idx < x_count; ++x_idx) {
         for (size_t y_idx = 0; y_idx < y_count; ++y_idx) {
             coord.y += delta;
             const auto e = _field.get_potential(coord);
@@ -280,17 +281,19 @@ bool Canvas::on_key_press_event(GdkEventKey* event)
         std::cout << "Delta line has been changed to " << _line_delta
                   << std::endl;
     } else if (event->keyval == GDK_KEY_x) {
-        const auto it = std::find_if(_circles.cbegin(), _circles.cend(), [](const auto& circle) { return circle.is_selected(); });
+        const auto it = std::find_if(
+            _circles.cbegin(), _circles.cend(),
+            [](const auto& circle) { return circle.is_selected(); });
         if (it != _circles.cend()) {
-             _charges.erase(it->get_charge());
-             _circles.erase(it);
+            _charges.erase(it->get_charge());
+            _circles.erase(it);
             _selected_circle = nullptr;
             _init_lines();
             queue_draw();
         }
     } else if (event->keyval == GDK_KEY_p) {
-      _draw_potential_flag = !_draw_potential_flag;
-      queue_draw();
+        _draw_potential_flag = !_draw_potential_flag;
+        queue_draw();
     }
     return false;
 }

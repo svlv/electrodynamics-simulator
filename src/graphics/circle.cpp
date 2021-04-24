@@ -29,10 +29,7 @@ void circle::draw(const Cairo::RefPtr<Cairo::Context>& ctx) const
 
 void circle::select(bool val) { _selected = val; }
 
-bool circle::is_selected() const
-{
-    return _selected;
-}
+bool circle::is_selected() const { return _selected; }
 
 bool circle::is_hint(const point& coord) const
 {
@@ -40,9 +37,6 @@ bool circle::is_hint(const point& coord) const
     return delta.module() <= charge_radius;
 }
 
-charge_ptr circle::get_charge() const
-{
-    return _charge;
-}
+charge_ptr circle::get_charge() const { return _charge; }
 
 } // namespace maxwell

@@ -69,11 +69,11 @@ void charges::erase(charge_ptr chrg)
     const auto erase_chrg = [&](data_t& charges) {
         const auto it = std::find(charges.cbegin(), charges.cend(), chrg);
         if (it != charges.cend()) {
-          charges.erase(it);
+            charges.erase(it);
         }
     };
     if (chrg->get_value() > 0.0) {
-       erase_chrg(_positive_charges);
+        erase_chrg(_positive_charges);
     } else {
         erase_chrg(_negative_charges);
     }
