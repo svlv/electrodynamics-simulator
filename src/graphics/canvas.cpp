@@ -246,7 +246,7 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
                 _circles.begin(), _circles.end(),
                 [&coord](const auto& circle) { return circle.is_hint(coord); });
             if (it != _circles.end()) {
-                auto props = charge_props(*parent, it->get_charge());
+                auto props = charge_props(*parent, it->get_charge(), *this);
                 props.run();
                 _init_lines();
                 queue_draw();
