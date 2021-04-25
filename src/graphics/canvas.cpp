@@ -6,6 +6,7 @@
 #include "graphics/curve.hpp"
 #include "graphics/line.hpp"
 #include "graphics/square.hpp"
+#include "graphics/widgets/charge_props.hpp"
 #include "point.hpp"
 #include "utils.hpp"
 
@@ -235,6 +236,21 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
             _circles.emplace_back(_charges.get_negative_charges().back());
             _init_lines();
             queue_draw();
+        }
+    } else if (event->type == GDK_DOUBLE_BUTTON_PRESS) {
+        _selected_circle = nullptr;
+        const auto coord = point(event->x, event->y);
+        Gtk::Window* parent = dynamic_cast<Gtk::Window*>(this->get_toplevel());
+        if (parent) {
+            auto it = std::find_if(
+                _circles.begin(), _circles.end(),
+                [&coord](const auto& circle) { return circle.is_hint(coord); });
+            if (it != _circles.end()) {
+                auto props = charge_props(*parent, it->get_charge());
+                props.run();
+                _init_lines();
+                queue_draw();
+            }
         }
     }
     return false;

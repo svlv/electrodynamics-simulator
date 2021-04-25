@@ -3,6 +3,7 @@
 #include "graphics/arrow.hpp"
 #include "graphics/base_line.hpp"
 #include "graphics/circle.hpp"
+#include "graphics/widgets/charge_props.hpp"
 #include "physics/charges.hpp"
 #include "physics/field.hpp"
 #include "utils.hpp"
@@ -48,6 +49,7 @@ class Canvas : public Gtk::DrawingArea
 
     base_line::type _line_type = base_line::type::curve;
     double _line_delta = 10.0;
+    std::shared_ptr<charge_props> _props;
 };
 
 } // namespace maxwell
