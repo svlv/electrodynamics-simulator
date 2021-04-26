@@ -2,19 +2,20 @@
 
 #include "physics/charge.hpp"
 #include <gtkmm/dialog.h>
+#include <gtkmm/drawingarea.h>
 #include <gtkmm/entry.h>
 #include <gtkmm/frame.h>
 #include <gtkmm/label.h>
 #include <map>
 #include <string>
-#include <gtkmm/drawingarea.h>
 
 namespace maxwell
 {
 class charge_props : public Gtk::Dialog
 {
   public:
-    explicit charge_props(Gtk::Window& parent, const charge_ptr& charge, Gtk::DrawingArea& area);
+    explicit charge_props(Gtk::Window& parent, const charge_ptr& charge,
+                          Gtk::DrawingArea& area);
     ~charge_props() = default;
 
   protected:
@@ -27,7 +28,7 @@ class charge_props : public Gtk::Dialog
     void _on_button_charge_right_click();
 
     void add_box(const Glib::ustring& label, const Glib::ustring& entry);
-    void add_arrows();
+    void add_arrow();
     charge_ptr _charge;
     std::map<std::string, std::unique_ptr<Gtk::Widget>> _widgets;
     Gtk::Frame _frame;

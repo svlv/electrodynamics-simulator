@@ -3,12 +3,92 @@
 namespace maxwell
 {
 
-charge_props::charge_props(Gtk::Window& parent, const charge_ptr& charge,Gtk::DrawingArea& area )
+const std::string label_coord_x = "label-coord-x";
+const std::string label_coord_y = "label-coord-y";
+const std::string label_value = "label-value";
+const std::string entry_coord_x = "entry-coord-x";
+const std::string entry_coord_y = "entry-coord-y";
+const std::string entry_value = "entry-value";
+const std::string arrow_coord_x_left = "arrow-coord-x-left";
+const std::string arrow_coord_x_right = "arrow-coord-x-right";
+const std::string arrow_coord_y_up = "arrow-coord-y-up";
+const std::string arrow_coord_y_down = "arrow-coord-y-down";
+const std::string arrow_value_up = "arrow-value-up";
+const std::string arrow_value_down = "arrow-value-down";
+const std::string button_coord_x_left = "button-coord-x-left";
+const std::string button_coord_x_right = "button-coord-x-right";
+const std::string button_coord_y_up = "button-coord-y-up";
+const std::string button_coord_y_down = "button-coord-y-down";
+const std::string button_value_up = "button-value-up";
+const std::string button_value_down = "button-value-down";
+const std::string box_coord_x = "box-coord-x";
+const std::string box_coord_y = "box-coord-y";
+const std::string box_value = "box-value";
+
+struct arrow_button {
+    std::unique_ptr<Gtk::Arrow> arrow;
+    std::unique_ptr<Gtk::Button> button;
+};
+
+struct hbox {
+    std::unique_ptr<Gtk::Label> label;
+    std::unique_ptr<Gtk::Entry> entry;
+    std::unique_ptr<arrow_button> button1;
+    std::unique_ptr<arrow_button> button2;
+    std::unique_ptr<Gtk::Box> box;
+};
+
+arrow_button make_arrow_button(Gtk::ArrowType type)
+{
+    auto button = std::make_unique<Gtk::Button>();
+    auto arrow =
+        std::make_unique<Gtk::Arrow>(type, Gtk::ShadowType::SHADOW_ETCHED_OUT);
+    button->add(*arrow);
+    return {std::move(arrow), std::move(button)};
+}
+
+box make_box(Gtk::ArrowType arrow_type1, Gtk::ArrowType arrow_type2)
+{
+    auto label = std::make_unique<Gtk::Label>();
+    auto entry = std::make_unique<Gtk::Entry>();
+    entry->set_hexpand(true);
+    auto button1 = make_arrow_button(arrow_type1);
+    auto button2 = make_arrow_button(arrow_type2);
+    auto box = std::make_unique<Gtk::Box>(
+        Gtk::Orientation::ORIENTATION_HORIZONTAL, 10);
+    box->add(*label);
+    box->add(*entry);
+    box->add(*button1);
+    box->add(*button2);
+    return {std::move(label), std::move(entry), std::move(button1),
+            std::move(button2), std::move(box)};
+}
+
+switch (type) {
+case Gtk::ArrowType::ARROW_UP:
+    button->signal_clicked().connect(
+        sigc::mem_fun(*this, &charge_props::_on_button_charge_up_click));
+    break;
+case Gtk::ArrowType::ARROW_DOWN:
+    button->signal_clicked().connect(
+        sigc::mem_fun(*this, &charge_props::_on_button_charge_down_click));
+    break;
+case Gtk::ArrowType::ARROW_RIGHT:
+    button->signal_clicked().connect(
+        sigc::mem_fun(*this, &charge_props::_on_button_charge_right_click));
+    break;
+case Gtk::ArrowType::ARROW_LEFT:
+    button->signal_clicked().connect(
+        sigc::mem_fun(*this, &charge_props::_on_button_charge_left_click));
+    break;
+}
+
+charge_props::charge_props(Gtk::Window& parent, const charge_ptr& charge,
+                           Gtk::DrawingArea& area)
     : Gtk::Dialog("", parent,
                   Gtk::DIALOG_MODAL | Gtk::DIALOG_DESTROY_WITH_PARENT |
                       Gtk::DIALOG_USE_HEADER_BAR),
-      _charge(charge)
-      , _drawing_area(area)
+      _charge(charge), _drawing_area(area)
 {
     set_size_request(200, 100);
     add_button("Cancel", Gtk::ResponseType::RESPONSE_CANCEL);
@@ -64,7 +144,6 @@ void charge_props::_on_button_charge_right_click()
 void charge_props::add_box(const Glib::ustring& label,
                            const Glib::ustring& entry)
 {
-    ++_idx;
     auto lbl = std::make_unique<Gtk::Label>(label);
     auto entr = std::make_unique<Gtk::Entry>();
     entr->set_text(entry);
@@ -88,30 +167,9 @@ std::string get_key_for_button_arrow(Gtk::ArrowType type)
     return "button_arrow_" + std::to_string(type);
 }
 
-void charge_props::add_arrows()
+void charge_props::create_arrow(Gtk::ArrowType type)
 {
-    auto box =
-        std::make_unique<Gtk::Box>(Gtk::Orientation::ORIENTATION_HORIZONTAL);
     const auto add_arrow = [&](Gtk::ArrowType type) {
-        auto button = std::make_unique<Gtk::Button>();
-        switch (type)
-        {
-          case Gtk::ArrowType::ARROW_UP:
-              button->signal_clicked().connect(sigc::mem_fun(*this, &charge_props::_on_button_charge_up_click));
-              break;
-          case Gtk::ArrowType::ARROW_DOWN:
-              button->signal_clicked().connect(sigc::mem_fun(*this, &charge_props::_on_button_charge_down_click));
-              break;
-          case Gtk::ArrowType::ARROW_RIGHT:
-              button->signal_clicked().connect(sigc::mem_fun(*this, &charge_props::_on_button_charge_right_click));
-              break;
-          case Gtk::ArrowType::ARROW_LEFT:
-              button->signal_clicked().connect(sigc::mem_fun(*this, &charge_props::_on_button_charge_left_click));
-              break;
-        }
-        auto arrow = std::make_unique<Gtk::Arrow>(
-            type, Gtk::ShadowType::SHADOW_ETCHED_OUT);
-        button->add(*arrow);
         box->add(*button);
         _widgets[get_key_for_arrow(type)] = std::move(arrow);
         _widgets[get_key_for_button_arrow(type)] = std::move(button);
