@@ -28,7 +28,11 @@ class charge_props : public Gtk::Dialog
     void _on_button_charge_left_click();
     void _on_button_charge_right_click();
 
+    Gtk::Entry* get_entry_x();
+    Gtk::Entry* get_entry_y();
+
     charge_ptr _charge;
+    charge_ptr _original;
     widgets_t _widgets;
     Gtk::Frame _frame;
     std::reference_wrapper<Gtk::DrawingArea> _drawing_area;

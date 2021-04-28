@@ -12,6 +12,7 @@ class charge
     enum class type { negative = 0, positive = 1, any = 2 };
 
     charge(const point& coordinates_, double value_);
+    charge(const charge& chrg);
 
     const point& get_coord() const;
     point& get_coord();
