@@ -10,7 +10,7 @@ struct arrow_button {
               arrow_type, Gtk::ShadowType::SHADOW_ETCHED_OUT))
     {
         button->add(*arrow);
-        //button->set_size_request(1);
+        // button->set_size_request(1);
     }
     void pack(const std::string& postfix, charge_props::widgets_t& widgets)
     {
@@ -32,14 +32,14 @@ struct hbox {
     {
         label->set_size_request(40);
         label->set_xalign(1.0);
-        //entry->set_size_request(50);
+        // entry->set_size_request(50);
         entry->set_width_chars(8);
         entry->set_max_length(8);
-        //entry->set_alignment(0.0);
-        //entry->set_default_size(40);
-        //label->set_justify(Gtk::Justification::JUSTIFY_LEFT);
-        //label->set_valign(Gtk::ALIGN_START);
-        //box->set_size_request(50);
+        // entry->set_alignment(0.0);
+        // entry->set_default_size(40);
+        // label->set_justify(Gtk::Justification::JUSTIFY_LEFT);
+        // label->set_valign(Gtk::ALIGN_START);
+        // box->set_size_request(50);
         box->pack_start(*label, Gtk::PackOptions::PACK_SHRINK);
         box->pack_start(*entry, Gtk::PackOptions::PACK_SHRINK);
         box->pack_start(*(button1->button), Gtk::PackOptions::PACK_SHRINK);
@@ -67,19 +67,19 @@ charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
     : Gtk::Dialog("", parent,
                   Gtk::DIALOG_MODAL | Gtk::DIALOG_DESTROY_WITH_PARENT |
                       Gtk::DIALOG_USE_HEADER_BAR),
-      _charge(chrg), _original(std::make_shared<charge>(*chrg)), _drawing_area(area)
+      _charge(chrg), _original(std::make_shared<charge>(*chrg)),
+      _drawing_area(area)
 {
-    //set_size_request(150, 60);
+    // set_size_request(150, 60);
     set_title("Charge");
-    //set_default_size(150, 200);
+    // set_default_size(150, 200);
     set_resizable(false);
     add_button("Cancel", Gtk::ResponseType::RESPONSE_CANCEL);
     add_button("Ok", Gtk::ResponseType::RESPONSE_OK);
 
     auto box_x = hbox(Gtk::ArrowType::ARROW_LEFT, Gtk::ArrowType::ARROW_RIGHT);
     box_x.label->set_text("x: ");
-    box_x.entry->set_text(
-        std::to_string((_charge->get_coord().x)));
+    box_x.entry->set_text(std::to_string((_charge->get_coord().x)));
     box_x.button1->button->signal_clicked().connect(
         sigc::mem_fun(*this, &charge_props::_on_button_charge_left_click));
     box_x.button2->button->signal_clicked().connect(
@@ -87,8 +87,7 @@ charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
 
     auto box_y = hbox(Gtk::ArrowType::ARROW_DOWN, Gtk::ArrowType::ARROW_UP);
     box_y.label->set_text("y: ");
-    box_y.entry->set_text(
-        std::to_string(_charge->get_coord().y));
+    box_y.entry->set_text(std::to_string(_charge->get_coord().y));
     box_y.button1->button->signal_clicked().connect(
         sigc::mem_fun(*this, &charge_props::_on_button_charge_down_click));
     box_y.button2->button->signal_clicked().connect(
@@ -96,8 +95,7 @@ charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
 
     auto box_value = hbox(Gtk::ArrowType::ARROW_DOWN, Gtk::ArrowType::ARROW_UP);
     box_value.label->set_text("Value: ");
-    box_value.entry->set_text(
-        std::to_string(_charge->get_value()));
+    box_value.entry->set_text(std::to_string(_charge->get_value()));
     box_value.button1->button->signal_clicked().connect(
         sigc::mem_fun(*this, &charge_props::_on_button_value_down_click));
     box_value.button2->button->signal_clicked().connect(
@@ -105,7 +103,7 @@ charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
 
     auto main_box =
         std::make_unique<Gtk::Box>(Gtk::Orientation::ORIENTATION_VERTICAL);
-    //main_box->set_size_request(50);
+    // main_box->set_size_request(50);
     main_box->pack_start(*box_x.box, Gtk::PackOptions::PACK_SHRINK);
     main_box->pack_start(*box_y.box, Gtk::PackOptions::PACK_SHRINK);
     main_box->pack_start(*box_value.box, Gtk::PackOptions::PACK_SHRINK);
@@ -174,7 +172,7 @@ void charge_props::_update_entry_y()
 
 void charge_props::_update_entry_value()
 {
-  auto* entry = dynamic_cast<Gtk::Entry*>(_widgets["entry-value"].get());
+    auto* entry = dynamic_cast<Gtk::Entry*>(_widgets["entry-value"].get());
     if (entry != nullptr) {
         entry->set_text(std::to_string(_charge->get_value()));
     }
@@ -184,8 +182,8 @@ void charge_props::_update_entry_value()
 void charge_props::on_response(int response_id)
 {
     if (response_id == Gtk::ResponseType::RESPONSE_CANCEL) {
-      *_charge = *_original;
-    } 
+        *_charge = *_original;
+    }
     Gtk::Dialog::on_response(response_id);
 }
 

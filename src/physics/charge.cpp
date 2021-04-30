@@ -7,9 +7,7 @@ charge::charge(const point& coord, double value) : _coord(coord), _value(value)
 {
 }
 
-charge::charge(const charge& chrg) : _coord(chrg._coord), _value(chrg._value)
-{
-}
+charge::charge(const charge& chrg) : _coord(chrg._coord), _value(chrg._value) {}
 
 const point& charge::get_coord() const { return _coord; }
 

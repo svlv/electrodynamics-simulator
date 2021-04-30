@@ -26,6 +26,7 @@ class Canvas : public Gtk::DrawingArea
     bool on_key_press_event(GdkEventKey* event) override;
     bool on_motion_notify_event(GdkEventMotion* event) override;
     void on_size_allocate(Gtk::Allocation& allocation) override;
+    bool on_scroll_event(GdkEventScroll* scroll_event) override;
 
   private:
     void _init_arrows(int width, int height);

@@ -21,6 +21,7 @@ Canvas::Canvas() : _field(_charges), _selected_circle(nullptr)
     add_events(Gdk::BUTTON_RELEASE_MASK);
     add_events(Gdk::POINTER_MOTION_MASK);
     add_events(Gdk::KEY_PRESS_MASK);
+    add_events(Gdk::SCROLL_MASK);
     property_can_focus() = true;
 }
 
@@ -251,6 +252,29 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
                 _init_lines();
                 queue_draw();
             }
+        }
+    }
+    return false;
+}
+
+bool Canvas::on_scroll_event(GdkEventScroll* scroll_event)
+{
+    const auto coord = point(scroll_event->x, scroll_event->y);
+    auto it = std::find_if(
+        _circles.begin(), _circles.end(),
+        [&coord](const auto& circle) { return circle.is_hint(coord); });
+    if (it != _circles.end()) {
+        if (scroll_event->direction == GdkScrollDirection::GDK_SCROLL_UP) {
+            auto charge = it->get_charge();
+            charge->set_value(charge->get_value() + 1.0);
+            _init_lines();
+            queue_draw();
+        } else if (scroll_event->direction ==
+                   GdkScrollDirection::GDK_SCROLL_DOWN) {
+            auto charge = it->get_charge();
+            charge->set_value(charge->get_value() - 1.0);
+            _init_lines();
+            queue_draw();
         }
     }
     return false;
