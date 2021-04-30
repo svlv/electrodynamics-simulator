@@ -27,9 +27,12 @@ class charge_props : public Gtk::Dialog
     void _on_button_charge_down_click();
     void _on_button_charge_left_click();
     void _on_button_charge_right_click();
+    void _on_button_value_up_click();
+    void _on_button_value_down_click();
 
-    Gtk::Entry* get_entry_x();
-    Gtk::Entry* get_entry_y();
+    void _update_entry_x();
+    void _update_entry_y();
+    void _update_entry_value();
 
     charge_ptr _charge;
     charge_ptr _original;

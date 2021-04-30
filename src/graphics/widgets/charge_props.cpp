@@ -60,6 +60,7 @@ struct hbox {
     std::unique_ptr<arrow_button> button1;
     std::unique_ptr<arrow_button> button2;
     std::unique_ptr<Gtk::Box> box;
+    std::unique_ptr<Gtk::Frame> frame;
 };
 charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
                            Gtk::DrawingArea& area)
@@ -78,7 +79,7 @@ charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
     auto box_x = hbox(Gtk::ArrowType::ARROW_LEFT, Gtk::ArrowType::ARROW_RIGHT);
     box_x.label->set_text("x: ");
     box_x.entry->set_text(
-        std::to_string(static_cast<int>(_charge->get_coord().x)));
+        std::to_string((_charge->get_coord().x)));
     box_x.button1->button->signal_clicked().connect(
         sigc::mem_fun(*this, &charge_props::_on_button_charge_left_click));
     box_x.button2->button->signal_clicked().connect(
@@ -87,7 +88,7 @@ charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
     auto box_y = hbox(Gtk::ArrowType::ARROW_DOWN, Gtk::ArrowType::ARROW_UP);
     box_y.label->set_text("y: ");
     box_y.entry->set_text(
-        std::to_string(static_cast<int>(_charge->get_coord().y)));
+        std::to_string(_charge->get_coord().y));
     box_y.button1->button->signal_clicked().connect(
         sigc::mem_fun(*this, &charge_props::_on_button_charge_down_click));
     box_y.button2->button->signal_clicked().connect(
@@ -96,7 +97,11 @@ charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
     auto box_value = hbox(Gtk::ArrowType::ARROW_DOWN, Gtk::ArrowType::ARROW_UP);
     box_value.label->set_text("Value: ");
     box_value.entry->set_text(
-        std::to_string(static_cast<int>(_charge->get_value())));
+        std::to_string(_charge->get_value()));
+    box_value.button1->button->signal_clicked().connect(
+        sigc::mem_fun(*this, &charge_props::_on_button_value_down_click));
+    box_value.button2->button->signal_clicked().connect(
+        sigc::mem_fun(*this, &charge_props::_on_button_value_up_click));
 
     auto main_box =
         std::make_unique<Gtk::Box>(Gtk::Orientation::ORIENTATION_VERTICAL);
@@ -128,69 +133,72 @@ charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
 void charge_props::_on_button_charge_up_click()
 {
     _charge->get_coord().y -= 10;
-
-    auto* entry_y = get_entry_y();
-    if (entry_y != nullptr) {
-        entry_y->set_text(std::to_string(static_cast<int>(_charge->get_coord().y)));
-    }
-    _drawing_area.get().queue_draw();
+    _update_entry_y();
 }
 
 void charge_props::_on_button_charge_down_click()
 {
     _charge->get_coord().y += 10;
-    auto* entry_y = get_entry_y();
-    if (entry_y != nullptr) {
-        entry_y->set_text(std::to_string(static_cast<int>(_charge->get_coord().y)));
-    }
-    _drawing_area.get().queue_draw();
+    _update_entry_y();
 }
 
 void charge_props::_on_button_charge_left_click()
 {
     _charge->get_coord().x -= 10;
-    _drawing_area.get().queue_draw();
+    _update_entry_x();
 }
 
 void charge_props::_on_button_charge_right_click()
 {
     _charge->get_coord().x += 10;
+    _update_entry_x();
+}
+
+void charge_props::_update_entry_x()
+{
+    auto* entry = dynamic_cast<Gtk::Entry*>(_widgets["entry-x"].get());
+    if (entry != nullptr) {
+        entry->set_text(std::to_string(_charge->get_coord().x));
+    }
     _drawing_area.get().queue_draw();
 }
 
-Gtk::Entry* charge_props::get_entry_x()
+void charge_props::_update_entry_y()
 {
-    return dynamic_cast<Gtk::Entry*>(_widgets["entry-x"].get());
+    auto* entry = dynamic_cast<Gtk::Entry*>(_widgets["entry-y"].get());
+    if (entry != nullptr) {
+        entry->set_text(std::to_string(_charge->get_coord().y));
+    }
+    _drawing_area.get().queue_draw();
 }
 
-Gtk::Entry* charge_props::get_entry_y()
+void charge_props::_update_entry_value()
 {
-    return dynamic_cast<Gtk::Entry*>(_widgets["entry-y"].get());
+  auto* entry = dynamic_cast<Gtk::Entry*>(_widgets["entry-value"].get());
+    if (entry != nullptr) {
+        entry->set_text(std::to_string(_charge->get_value()));
+    }
+    _drawing_area.get().queue_draw();
 }
 
 void charge_props::on_response(int response_id)
 {
-    if (response_id == Gtk::ResponseType::RESPONSE_OK) {
-        const auto* entry_x =
-            dynamic_cast<Gtk::Entry*>(_widgets["entry-x"].get());
-        if (entry_x != nullptr) {
-            auto x = std::stoi(entry_x->get_text().c_str());
-            _charge->get_coord().x = x;
-        }
-        const auto* entry_y =
-            dynamic_cast<Gtk::Entry*>(_widgets["entry-y"].get());
-        if (entry_y != nullptr) {
-            auto y = std::stoi(entry_y->get_text().c_str());
-            _charge->get_coord().y = y;
-        }
-        const auto* entry_val =
-            dynamic_cast<Gtk::Entry*>(_widgets["entry-value"].get());
-        if (entry_val != nullptr) {
-            auto val = std::stoi(entry_val->get_text().c_str());
-            _charge->set_value(val);
-        }
-    }
+    if (response_id == Gtk::ResponseType::RESPONSE_CANCEL) {
+      *_charge = *_original;
+    } 
     Gtk::Dialog::on_response(response_id);
+}
+
+void charge_props::_on_button_value_up_click()
+{
+    _charge->set_value(_charge->get_value() + 1.0);
+    _update_entry_value();
+}
+
+void charge_props::_on_button_value_down_click()
+{
+    _charge->set_value(_charge->get_value() - 1.0);
+    _update_entry_value();
 }
 
 } // namespace maxwell
