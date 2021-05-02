@@ -3,9 +3,6 @@
 #include "physics/charge.hpp"
 #include <gtkmm/dialog.h>
 #include <gtkmm/drawingarea.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/frame.h>
-#include <gtkmm/label.h>
 #include <map>
 #include <string>
 
@@ -37,7 +34,6 @@ class charge_props : public Gtk::Dialog
     charge_ptr _charge;
     charge_ptr _original;
     widgets_t _widgets;
-    Gtk::Frame _frame;
     std::reference_wrapper<Gtk::DrawingArea> _drawing_area;
 };
 } // namespace maxwell

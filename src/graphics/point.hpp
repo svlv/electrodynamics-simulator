@@ -16,6 +16,7 @@ struct point {
 
     friend point operator+(const point& lhs, const point& rhs);
     friend point operator-(const point& lhs, const point& rhs);
+    friend bool operator<(const point& lhs, const point& rhs);
 
     double module() const;
 

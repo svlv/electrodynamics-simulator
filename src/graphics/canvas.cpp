@@ -90,6 +90,12 @@ void Canvas::_init_lines()
             coord.x + cos(idx * 2 * M_PI / lines_per_charge) * line_delta,
             coord.y + sin(idx * 2 * M_PI / lines_per_charge) * line_delta);
     };
+    const auto& charges = _charges.get_charges();
+    const auto& list = charges.get<by_value>();
+    //for (const auto& charge : list) {
+    //  std::cout << charge->get_value() << " ";
+    //}
+    //std::cout << "\n---------------\n";
     for (const auto& charge : _charges.get_positive_charges()) {
         for (size_t idx = 0; idx < lines_per_charge; ++idx) {
             _lines.emplace_back(

@@ -1,5 +1,9 @@
 #include "graphics/widgets/charge_props.hpp"
 #include <gtkmm/arrow.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/frame.h>
+#include <gtkmm/label.h>
+
 namespace maxwell
 {
 
@@ -10,7 +14,6 @@ struct arrow_button {
               arrow_type, Gtk::ShadowType::SHADOW_ETCHED_OUT))
     {
         button->add(*arrow);
-        // button->set_size_request(1);
     }
     void pack(const std::string& postfix, charge_props::widgets_t& widgets)
     {
@@ -32,14 +35,8 @@ struct hbox {
     {
         label->set_size_request(40);
         label->set_xalign(1.0);
-        // entry->set_size_request(50);
         entry->set_width_chars(8);
         entry->set_max_length(8);
-        // entry->set_alignment(0.0);
-        // entry->set_default_size(40);
-        // label->set_justify(Gtk::Justification::JUSTIFY_LEFT);
-        // label->set_valign(Gtk::ALIGN_START);
-        // box->set_size_request(50);
         box->pack_start(*label, Gtk::PackOptions::PACK_SHRINK);
         box->pack_start(*entry, Gtk::PackOptions::PACK_SHRINK);
         box->pack_start(*(button1->button), Gtk::PackOptions::PACK_SHRINK);
@@ -62,6 +59,7 @@ struct hbox {
     std::unique_ptr<Gtk::Box> box;
     std::unique_ptr<Gtk::Frame> frame;
 };
+
 charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
                            Gtk::DrawingArea& area)
     : Gtk::Dialog("", parent,
@@ -70,9 +68,7 @@ charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
       _charge(chrg), _original(std::make_shared<charge>(*chrg)),
       _drawing_area(area)
 {
-    // set_size_request(150, 60);
     set_title("Charge");
-    // set_default_size(150, 200);
     set_resizable(false);
     add_button("Cancel", Gtk::ResponseType::RESPONSE_CANCEL);
     add_button("Ok", Gtk::ResponseType::RESPONSE_OK);
@@ -103,7 +99,6 @@ charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
 
     auto main_box =
         std::make_unique<Gtk::Box>(Gtk::Orientation::ORIENTATION_VERTICAL);
-    // main_box->set_size_request(50);
     main_box->pack_start(*box_x.box, Gtk::PackOptions::PACK_SHRINK);
     main_box->pack_start(*box_y.box, Gtk::PackOptions::PACK_SHRINK);
     main_box->pack_start(*box_value.box, Gtk::PackOptions::PACK_SHRINK);
@@ -112,19 +107,20 @@ charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
     box_y.pack("y", _widgets);
     box_value.pack("value", _widgets);
 
-    _frame.set_label("Properties");
-    _frame.set_shadow_type(Gtk::SHADOW_ETCHED_OUT);
-    _frame.add(*main_box);
-    _frame.set_border_width(5);
-    //_frame.set_size_request(120);
-    _frame.set_vexpand(false);
-    _frame.set_hexpand(false);
-    _widgets["main-box"] = std::move(main_box);
+    auto frame = std::make_unique<Gtk::Frame>();
+    frame->set_label("Properties");
+    frame->set_shadow_type(Gtk::SHADOW_ETCHED_OUT);
+    frame->add(*main_box);
+    frame->set_border_width(5);
+    frame->set_vexpand(false);
+    frame->set_hexpand(false);
+
     auto* content = get_content_area();
-    auto* header = get_header_bar();
-    header->set_size_request(100);
-    header->set_has_subtitle(false);
-    content->pack_start(_frame, Gtk::PackOptions::PACK_SHRINK);
+    content->pack_start(*frame, Gtk::PackOptions::PACK_SHRINK);
+
+    _widgets["main-box"] = std::move(main_box);
+    _widgets["main-frame"] = std::move(frame);
+
     show_all();
 }
 

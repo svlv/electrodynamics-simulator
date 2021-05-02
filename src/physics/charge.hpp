@@ -18,6 +18,7 @@ class charge
     point& get_coord();
     void set_coord(const point& coord);
     double get_value() const;
+    double& get_value();
     void set_value(double value);
 
   private:
