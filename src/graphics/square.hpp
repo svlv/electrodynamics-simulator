@@ -2,7 +2,7 @@
 #include "graphics/point.hpp"
 #include <cairomm/context.h>
 #include <gdkmm/rgba.h>
-namespace maxwell
+namespace elfield
 {
 class square
 {
@@ -18,4 +18,4 @@ class square
     point _coord;
     Gdk::RGBA _color;
 };
-} // namespace maxwell
+} // namespace elfield

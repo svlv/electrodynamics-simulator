@@ -1,6 +1,6 @@
 #pragma once
 #include "graphics/base_line.hpp"
-namespace maxwell
+namespace elfield
 {
 class line : public base_line
 {
@@ -9,4 +9,4 @@ class line : public base_line
     ~line() override = default;
     void draw(const Cairo::RefPtr<Cairo::Context>& ctx) const override;
 };
-} // namespace maxwell
+} // namespace elfield

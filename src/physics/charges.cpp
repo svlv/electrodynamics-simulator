@@ -1,6 +1,6 @@
 #include "charges.hpp"
 #include <algorithm>
-namespace maxwell
+namespace elfield
 {
 charges::charges() {}
 void charges::clear()
@@ -79,4 +79,4 @@ void charges::erase(charge_ptr chrg)
     }
 }
 
-} // namespace maxwell
+} // namespace elfield

@@ -3,7 +3,7 @@
 #include "graphics/point.hpp"
 #include <memory>
 
-namespace maxwell
+namespace elfield
 {
 
 class charge
@@ -22,10 +22,10 @@ class charge
     void set_value(double value);
 
   private:
-    point _coord;
-    double _value;
+    mutable point _coord;
+    mutable double _value;
 };
 
 using charge_ptr = std::shared_ptr<charge>;
 
-} // namespace maxwell
+} // namespace elfield

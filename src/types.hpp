@@ -1,8 +1,8 @@
 #pragma once
 
-namespace maxwell
+namespace elfield
 {
 
 using angle_t = double;
 
-} // namespace maxwell
+} // namespace elfield

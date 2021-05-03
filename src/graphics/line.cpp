@@ -1,6 +1,6 @@
 #include "graphics/line.hpp"
 
-namespace maxwell
+namespace elfield
 {
 
 void line::draw(const Cairo::RefPtr<Cairo::Context>& ctx) const
@@ -16,4 +16,4 @@ void line::draw(const Cairo::RefPtr<Cairo::Context>& ctx) const
     ctx->stroke();
 }
 
-} // namespace maxwell
+} // namespace elfield

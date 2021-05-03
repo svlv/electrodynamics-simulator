@@ -3,7 +3,7 @@
 #include "graphics/arrow.hpp"
 #include <gdkmm/rgba.h>
 
-namespace maxwell
+namespace elfield
 {
 
 const Gdk::RGBA bg_color("#ffefd7");
@@ -24,4 +24,4 @@ const size_t lines_per_charge = 8;
 const double line_width = 5.0;
 
 const double charge_radius = 10.0;
-} // namespace maxwell
+} // namespace elfield

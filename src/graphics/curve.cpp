@@ -1,6 +1,6 @@
 #include "graphics/curve.hpp"
 
-namespace maxwell
+namespace elfield
 {
 
 void curve::fill()
@@ -31,4 +31,4 @@ void curve::draw(const Cairo::RefPtr<Cairo::Context>& ctx) const
     ctx->stroke();
 }
 
-} // namespace maxwell
+} // namespace elfield

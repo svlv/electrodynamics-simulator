@@ -4,7 +4,7 @@
 #include <gtkmm/frame.h>
 #include <gtkmm/label.h>
 
-namespace maxwell
+namespace elfield
 {
 
 struct arrow_button {
@@ -195,4 +195,4 @@ void charge_props::_on_button_value_down_click()
     _update_entry_value();
 }
 
-} // namespace maxwell
+} // namespace elfield

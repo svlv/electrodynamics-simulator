@@ -2,7 +2,7 @@
 
 #include "types.hpp"
 
-namespace maxwell
+namespace elfield
 {
 
 struct point {
@@ -24,4 +24,4 @@ struct point {
     double y;
 };
 
-} // namespace maxwell
+} // namespace elfield

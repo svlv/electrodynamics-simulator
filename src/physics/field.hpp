@@ -4,7 +4,7 @@
 #include "physics/charges.hpp"
 #include <functional>
 
-namespace maxwell
+namespace elfield
 {
 
 class field
@@ -27,4 +27,4 @@ class field
     std::reference_wrapper<const charges> _charges;
 };
 
-} // namespace maxwell
+} // namespace elfield

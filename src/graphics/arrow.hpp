@@ -8,7 +8,7 @@
 
 #include <cairomm/context.h>
 
-namespace maxwell
+namespace elfield
 {
 
 class arrow
@@ -44,4 +44,4 @@ class arrow
     bool _is_selected;
 };
 
-} // namespace maxwell
+} // namespace elfield

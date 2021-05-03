@@ -2,7 +2,7 @@
 
 #include <cairomm/context.h>
 
-namespace maxwell
+namespace elfield
 {
 class context_guard
 {
@@ -16,4 +16,4 @@ class context_guard
   private:
     const Cairo::RefPtr<Cairo::Context>& _cr;
 };
-} // namespace maxwell
+} // namespace elfield

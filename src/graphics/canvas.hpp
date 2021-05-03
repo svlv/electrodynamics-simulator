@@ -10,7 +10,7 @@
 #include <gtkmm/drawingarea.h>
 #include <vector>
 
-namespace maxwell
+namespace elfield
 {
 
 class Canvas : public Gtk::DrawingArea
@@ -53,4 +53,4 @@ class Canvas : public Gtk::DrawingArea
     std::shared_ptr<charge_props> _props;
 };
 
-} // namespace maxwell
+} // namespace elfield

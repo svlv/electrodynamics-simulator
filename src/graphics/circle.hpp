@@ -3,7 +3,7 @@
 #include "physics/charge.hpp"
 #include <cairomm/context.h>
 
-namespace maxwell
+namespace elfield
 {
 
 class circle
@@ -26,4 +26,4 @@ class circle
     bool _selected;
 };
 
-} // namespace maxwell
+} // namespace elfield

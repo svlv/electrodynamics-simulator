@@ -6,7 +6,7 @@
 #include <map>
 #include <string>
 
-namespace maxwell
+namespace elfield
 {
 class charge_props : public Gtk::Dialog
 {
@@ -36,4 +36,4 @@ class charge_props : public Gtk::Dialog
     widgets_t _widgets;
     std::reference_wrapper<Gtk::DrawingArea> _drawing_area;
 };
-} // namespace maxwell
+} // namespace elfield

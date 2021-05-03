@@ -5,7 +5,7 @@
 #include <gtkmm/frame.h>
 #include <gtkmm/window.h>
 
-namespace maxwell
+namespace elfield
 {
 
 class MainWindow : public Gtk::Window
@@ -22,4 +22,4 @@ class MainWindow : public Gtk::Window
     bool on_key_press_event(GdkEventKey* event) override;
 };
 
-} // namespace maxwell
+} // namespace elfield

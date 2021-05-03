@@ -3,7 +3,7 @@
 #include "context_guard.hpp"
 
 #include <gtkmm.h>
-namespace maxwell
+namespace elfield
 {
 
 circle::circle(const std::shared_ptr<charge>& chrg) : _charge(chrg) {}
@@ -39,4 +39,4 @@ bool circle::is_hint(const point& coord) const
 
 charge_ptr circle::get_charge() const { return _charge; }
 
-} // namespace maxwell
+} // namespace elfield

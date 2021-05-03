@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-namespace maxwell
+namespace elfield
 {
 class base_line
 {
@@ -22,4 +22,4 @@ class base_line
     std::vector<point> _points;
 };
 using base_line_uptr = std::unique_ptr<base_line>;
-} // namespace maxwell
+} // namespace elfield

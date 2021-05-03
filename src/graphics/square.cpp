@@ -3,7 +3,7 @@
 
 #include <gtkmm.h>
 
-namespace maxwell
+namespace elfield
 {
 
 double square::size = 10.0;
@@ -27,4 +27,4 @@ void square::draw(const Cairo::RefPtr<Cairo::Context>& ctx) const
     ctx->fill();
 }
 
-} // namespace maxwell
+} // namespace elfield

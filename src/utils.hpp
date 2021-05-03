@@ -2,7 +2,7 @@
 
 #include "types.hpp"
 
-namespace maxwell
+namespace elfield
 {
 
 struct size {
@@ -13,4 +13,4 @@ struct size {
 
 angle_t get_angle(double cos_val, double sin_val);
 
-} // namespace maxwell
+} // namespace elfield

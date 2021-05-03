@@ -1,6 +1,6 @@
 #include "window.hpp"
 
-namespace maxwell
+namespace elfield
 {
 
 MainWindow::MainWindow()
@@ -28,4 +28,4 @@ bool MainWindow::on_key_press_event(GdkEventKey* event)
     return Gtk::Window::on_key_press_event(event);
 }
 
-} // namespace maxwell
+} // namespace elfield

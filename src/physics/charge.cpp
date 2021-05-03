@@ -1,6 +1,6 @@
 #include "charge.hpp"
 
-namespace maxwell
+namespace elfield
 {
 
 charge::charge(const point& coord, double value) : _coord(coord), _value(value)
@@ -17,4 +17,4 @@ double& charge::get_value() { return _value; }
 
 void charge::set_coord(const point& coord) { _coord = coord; }
 void charge::set_value(double value) { _value = value; }
-} // namespace maxwell
+} // namespace elfield

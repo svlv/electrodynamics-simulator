@@ -1,7 +1,7 @@
 #include "arrow.hpp"
 #include <iostream>
 
-namespace maxwell
+namespace elfield
 {
 
 arrow::arrow(const params& size, const point& coord, angle_t angle)
@@ -91,4 +91,4 @@ bool arrow::is_selected() const { return _is_selected; }
 
 const point& arrow::get_coord() const { return _coord; }
 
-} // namespace maxwell
+} // namespace elfield

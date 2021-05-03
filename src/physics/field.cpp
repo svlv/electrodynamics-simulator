@@ -5,14 +5,14 @@
 #include <cmath>
 #include <numeric>
 
-namespace maxwell
+namespace elfield
 {
 
 field::field(const charges& chrgs) : _charges(chrgs) {}
 
 double field::get_angle(const point& coord) const
 {
-    return maxwell::get_angle(get_cos(coord), get_sin(coord));
+    return elfield::get_angle(get_cos(coord), get_sin(coord));
 }
 
 double field::get_Ex(const point& coord) const
@@ -72,4 +72,4 @@ double field::get_potential(const point& coord) const
            std::accumulate(neg.cbegin(), neg.cend(), 0.0, sum);
 }
 
-} // namespace maxwell
+} // namespace elfield
