@@ -31,7 +31,7 @@ class Canvas : public Gtk::DrawingArea
 
   private:
     void _init_arrows(int width, int height);
-    void _init_lines();
+    void _init_lines(std::optional<Gtk::Allocation> allocation = std::optional<Gtk::Allocation>());
     base_line_uptr _make_line(point pos, bool positive, const size& sz);
     void _draw_arrows(const size& sz, const Cairo::RefPtr<Cairo::Context>& cr);
     void _draw_charges(const Cairo::RefPtr<Cairo::Context>& ctx);

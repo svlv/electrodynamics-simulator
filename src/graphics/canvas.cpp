@@ -86,10 +86,12 @@ base_line_uptr Canvas::_make_line(point pos, bool positive, const size& sz)
     return crv;
 }
 
-void Canvas::_init_lines()
+void Canvas::_init_lines(std::optional<Gtk::Allocation> allocation)
 {
-    Gtk::Allocation allocation = get_allocation();
-    const auto sz = size(allocation.get_width(), allocation.get_height());
+    if (!allocation.has_value()) {
+        allocation = get_allocation();
+    }
+    const auto sz = size(allocation->get_width(), allocation->get_height());
     _lines.clear();
     const auto get_begin = [](const point& coord, size_t idx) -> point {
         return point(
@@ -345,12 +347,16 @@ bool Canvas::on_motion_notify_event(GdkEventMotion* event)
         _selected_circle->move(coord);
         reinit_field();
     } else {
-        for (auto& arr : _arrows) {
-            arr.select(arr.is_hint(coord));
-        }
+        bool flg = false;
         for (auto& circle : _circles) {
-            circle.select(circle.is_hint(coord));
+            bool is_hint = circle.is_hint(coord);
+            flg = flg || is_hint;
+            circle.select(is_hint);
         }
+        for (auto& arr : _arrows) {
+            arr.select(!flg && arr.is_hint(coord));
+        }
+        
     }
     queue_draw();
     return false;
@@ -359,7 +365,7 @@ bool Canvas::on_motion_notify_event(GdkEventMotion* event)
 void Canvas::on_size_allocate(Gtk::Allocation& allocation)
 {
     _init_arrows(allocation.get_width(), allocation.get_height());
-
+    _init_lines(allocation);
     Gtk::DrawingArea::on_size_allocate(allocation);
 }
 
