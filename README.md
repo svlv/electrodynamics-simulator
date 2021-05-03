@@ -28,10 +28,10 @@ make
 # Mouse events
 | Event        | Action           |
 | ------------- |:-------------:|
-| Press left button | Add a positive charge |
-| Press right button | Add a negative charge |
+| Left click | Add a positive charge |
+| Right click | Add a negative charge |
 | Press left button and move cursor| Move a charge |
-| Double press left button on a charge | Open *Charge properties* dialog |
+| Double left click on a charge | Open **Charge properties** dialog |
 
 # Keybindings
 | Key        | Action           |
