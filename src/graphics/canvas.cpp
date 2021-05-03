@@ -16,7 +16,7 @@
 namespace elfield
 {
 
-Canvas::Canvas() : _field(_charges), _selected_circle(nullptr)
+canvas::canvas() : _field(_charges), _selected_circle(nullptr)
 {
     add_events(Gdk::BUTTON_PRESS_MASK);
     add_events(Gdk::BUTTON_RELEASE_MASK);
@@ -26,12 +26,9 @@ Canvas::Canvas() : _field(_charges), _selected_circle(nullptr)
     property_can_focus() = true;
 }
 
-void Canvas::reinit_field()
-{
-    _init_lines();
-}
+void canvas::reinit_field() { _init_lines(); }
 
-void Canvas::_init_arrows(int width, int height)
+void canvas::_init_arrows(int width, int height)
 {
     _arrows.clear();
 
@@ -47,7 +44,7 @@ void Canvas::_init_arrows(int width, int height)
     }
 }
 
-base_line_uptr Canvas::_make_line(point pos, bool positive, const size& sz)
+base_line_uptr canvas::_make_line(point pos, bool positive, const size& sz)
 {
     const auto valid_position = [&pos, &sz]() {
         return pos.x > 0 && pos.x < sz.width && pos.y > 0 && pos.y < sz.height;
@@ -86,7 +83,7 @@ base_line_uptr Canvas::_make_line(point pos, bool positive, const size& sz)
     return crv;
 }
 
-void Canvas::_init_lines(std::optional<Gtk::Allocation> allocation)
+void canvas::_init_lines(std::optional<Gtk::Allocation> allocation)
 {
     if (!allocation.has_value()) {
         allocation = get_allocation();
@@ -100,22 +97,23 @@ void Canvas::_init_lines(std::optional<Gtk::Allocation> allocation)
     };
     for (const auto& charge : _charges.get_positive_charges()) {
         if (charge->get_value() > 0.0) {
-        for (size_t idx = 0; idx < lines_per_charge; ++idx) {
-            _lines.emplace_back(
-                _make_line(get_begin(charge->get_coord(), idx), true, sz));
-        }}
+            for (size_t idx = 0; idx < lines_per_charge; ++idx) {
+                _lines.emplace_back(
+                    _make_line(get_begin(charge->get_coord(), idx), true, sz));
+            }
+        }
     }
     for (const auto& charge : _charges.get_negative_charges()) {
-      if (charge->get_value() < 0.0) {
-        for (size_t idx = 0; idx < lines_per_charge; ++idx) {
-            _lines.emplace_back(
-                _make_line(get_begin(charge->get_coord(), idx), false, sz));
+        if (charge->get_value() < 0.0) {
+            for (size_t idx = 0; idx < lines_per_charge; ++idx) {
+                _lines.emplace_back(
+                    _make_line(get_begin(charge->get_coord(), idx), false, sz));
+            }
         }
-      }
     }
 }
 
-void Canvas::_draw_arrows(const size& sz,
+void canvas::_draw_arrows(const size& sz,
                           const Cairo::RefPtr<Cairo::Context>& cr)
 {
     if (_draw_arrows_flag && !_charges.empty()) {
@@ -144,7 +142,7 @@ void Canvas::_draw_arrows(const size& sz,
     }
 }
 
-void Canvas::_draw_lines(const Cairo::RefPtr<Cairo::Context>& cr)
+void canvas::_draw_lines(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     if (_draw_lines_flag && !_lines.empty()) {
         const auto guard = context_guard(cr);
@@ -155,21 +153,21 @@ void Canvas::_draw_lines(const Cairo::RefPtr<Cairo::Context>& cr)
     }
 }
 
-void Canvas::_draw_charges(const Cairo::RefPtr<Cairo::Context>& ctx)
+void canvas::_draw_charges(const Cairo::RefPtr<Cairo::Context>& ctx)
 {
     for (const auto& circle : _circles) {
         circle.draw(ctx);
     }
 }
 
-void Canvas::_draw_background(const Cairo::RefPtr<Cairo::Context>& ctx)
+void canvas::_draw_background(const Cairo::RefPtr<Cairo::Context>& ctx)
 {
     const auto guard = context_guard(ctx);
     Gdk::Cairo::set_source_rgba(ctx, bg_color);
     ctx->paint();
 }
 
-void Canvas::_draw_potential(const Cairo::RefPtr<Cairo::Context>& ctx)
+void canvas::_draw_potential(const Cairo::RefPtr<Cairo::Context>& ctx)
 {
     if (_charges.empty() || !_draw_potential_flag) {
         return;
@@ -213,7 +211,7 @@ void Canvas::_draw_potential(const Cairo::RefPtr<Cairo::Context>& ctx)
     }
 }
 
-bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+bool canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     Gtk::Allocation allocation = get_allocation();
     const auto sz = size(allocation.get_width(), allocation.get_height());
@@ -227,7 +225,7 @@ bool Canvas::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     return true;
 }
 
-bool Canvas::on_button_press_event(GdkEventButton* event)
+bool canvas::on_button_press_event(GdkEventButton* event)
 {
     if (event->type == GDK_BUTTON_PRESS) {
         const auto coord = point(event->x, event->y);
@@ -251,16 +249,16 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
         Gtk::Window* parent = dynamic_cast<Gtk::Window*>(this->get_toplevel());
         const auto* circle = get_hint_circle(coord);
         if (parent && circle) {
-                auto props = charge_props(*parent, circle->get_charge(), *this);
-                props.run();
-                reinit_field();
-                queue_draw();
+            auto props = charge_props(*parent, circle->get_charge(), *this);
+            props.run();
+            reinit_field();
+            queue_draw();
         }
     }
     return false;
 }
 
-bool Canvas::on_scroll_event(GdkEventScroll* scroll_event)
+bool canvas::on_scroll_event(GdkEventScroll* scroll_event)
 {
     const auto coord = point(scroll_event->x, scroll_event->y);
     auto* hint_circle = get_hint_circle(coord);
@@ -282,13 +280,13 @@ bool Canvas::on_scroll_event(GdkEventScroll* scroll_event)
     return false;
 }
 
-bool Canvas::on_button_release_event(GdkEventButton* event)
+bool canvas::on_button_release_event(GdkEventButton* event)
 {
     _selected_circle = nullptr;
     return false;
 }
 
-bool Canvas::on_key_press_event(GdkEventKey* event)
+bool canvas::on_key_press_event(GdkEventKey* event)
 {
     if (event->keyval == GDK_KEY_l) {
         _draw_lines_flag = !_draw_lines_flag;
@@ -340,7 +338,7 @@ bool Canvas::on_key_press_event(GdkEventKey* event)
     return false;
 }
 
-bool Canvas::on_motion_notify_event(GdkEventMotion* event)
+bool canvas::on_motion_notify_event(GdkEventMotion* event)
 {
     const auto coord = point(event->x, event->y);
     if (_selected_circle) {
@@ -356,25 +354,25 @@ bool Canvas::on_motion_notify_event(GdkEventMotion* event)
         for (auto& arr : _arrows) {
             arr.select(!flg && arr.is_hint(coord));
         }
-        
     }
     queue_draw();
     return false;
 }
 
-void Canvas::on_size_allocate(Gtk::Allocation& allocation)
+void canvas::on_size_allocate(Gtk::Allocation& allocation)
 {
     _init_arrows(allocation.get_width(), allocation.get_height());
     _init_lines(allocation);
     Gtk::DrawingArea::on_size_allocate(allocation);
 }
 
-circle* Canvas::get_hint_circle(const point& coord)
+circle* canvas::get_hint_circle(const point& coord)
 {
-    auto it = std::find_if(_circles.begin(), _circles.end(),
+    auto it = std::find_if(
+        _circles.begin(), _circles.end(),
         [&coord](const auto& circle) { return circle.is_hint(coord); });
     if (it != _circles.end()) {
-      return &(*it);
+        return &(*it);
     }
     return nullptr;
 }

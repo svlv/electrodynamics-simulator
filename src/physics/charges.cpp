@@ -84,23 +84,22 @@ void charges::erase(charge_ptr chrg)
 
 void charges::validate(charge_ptr chrg)
 {
-  const auto validate_chrg = [&chrg](data_t& src, data_t& dest) {
-    auto it = std::find(src.cbegin(), src.cend(), chrg);
-    if (it != src.cend()) {
-      return;
+    const auto validate_chrg = [&chrg](data_t& src, data_t& dest) {
+        auto it = std::find(src.cbegin(), src.cend(), chrg);
+        if (it != src.cend()) {
+            return;
+        }
+        it = std::find(dest.cbegin(), dest.cend(), chrg);
+        if (it != dest.cend()) {
+            dest.erase(it);
+            src.emplace_back(std::move(chrg));
+        }
+    };
+    if (chrg->get_value() > 0.0) {
+        validate_chrg(_positive_charges, _negative_charges);
+    } else if (chrg->get_value() < 0.0) {
+        validate_chrg(_negative_charges, _positive_charges);
     }
-    it = std::find(dest.cbegin(), dest.cend(), chrg);
-    if (it != dest.cend()) {
-        dest.erase(it);
-        src.emplace_back(std::move(chrg));
-    }
-  };
-  if (chrg->get_value() > 0.0) {
-    validate_chrg(_positive_charges, _negative_charges);
-  }
-  else if (chrg->get_value() < 0.0) {
-    validate_chrg(_negative_charges, _positive_charges);
-  }
 }
 
 } // namespace elfield

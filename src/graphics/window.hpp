@@ -8,14 +8,14 @@
 namespace elfield
 {
 
-class MainWindow : public Gtk::Window
+class main_window : public Gtk::Window
 {
   public:
-    MainWindow();
-    virtual ~MainWindow() = default;
+    main_window();
+    virtual ~main_window() = default;
 
   protected:
-    Canvas _canvas;
+    canvas _canvas;
     Gtk::Frame _frame;
 
   private:

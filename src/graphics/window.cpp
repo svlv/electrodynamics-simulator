@@ -3,7 +3,7 @@
 namespace elfield
 {
 
-MainWindow::MainWindow()
+main_window::main_window()
 {
     set_title("Elfield");
     set_size_request(200, 200);
@@ -19,7 +19,7 @@ MainWindow::MainWindow()
     show_all_children();
 }
 
-bool MainWindow::on_key_press_event(GdkEventKey* event)
+bool main_window::on_key_press_event(GdkEventKey* event)
 {
     if (event->keyval == GDK_KEY_q) {
         close();

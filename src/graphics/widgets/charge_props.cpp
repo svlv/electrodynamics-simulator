@@ -155,8 +155,8 @@ void charge_props::_update_entry_x()
     if (entry != nullptr) {
         entry->set_text(std::to_string(_charge->get_coord().x));
     }
-    auto& canvas = dynamic_cast<Canvas&>(_drawing_area.get());
-    canvas.reinit_field();
+    auto& area = dynamic_cast<canvas&>(_drawing_area.get());
+    area.reinit_field();
     _drawing_area.get().queue_draw();
 }
 
@@ -166,8 +166,8 @@ void charge_props::_update_entry_y()
     if (entry != nullptr) {
         entry->set_text(std::to_string(_charge->get_coord().y));
     }
-    auto& canvas = dynamic_cast<Canvas&>(_drawing_area.get());
-    canvas.reinit_field();
+    auto& area = dynamic_cast<canvas&>(_drawing_area.get());
+    area.reinit_field();
     _drawing_area.get().queue_draw();
 }
 
@@ -177,8 +177,8 @@ void charge_props::_update_entry_value()
     if (entry != nullptr) {
         entry->set_text(std::to_string(_charge->get_value()));
     }
-    auto& canvas = dynamic_cast<Canvas&>(_drawing_area.get());
-    canvas.reinit_field();
+    auto& area = dynamic_cast<canvas&>(_drawing_area.get());
+    area.reinit_field();
     _drawing_area.get().queue_draw();
 }
 
