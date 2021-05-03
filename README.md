@@ -28,14 +28,16 @@ make
 # Mouse events
 | Event        | Action           |
 | ------------- |:-------------:|
-| Press right button | Add a positive charge|
-| Press left button | Add a negative charge|
-| Press right button and move cursor| Move a charge|
+| Press left button | Add a positive charge |
+| Press right button | Add a negative charge |
+| Press left button and move cursor| Move a charge |
+| Double press left button on a charge | Open *Charge properties* dialog |
 
 # Keybindings
 | Key        | Action           |
 | ------------- |:-------------:|
 | `q`      | Quit simulator |
+| `s`      | Save to png file |
 | `c`      | Remove all charges |
 | `a`      | Toggle arrows |
 | `l`      | Toggle lines |
