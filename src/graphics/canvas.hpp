@@ -19,6 +19,7 @@ class canvas : public Gtk::DrawingArea
     canvas();
     virtual ~canvas() = default;
     void reinit_field();
+    void save_to_png();
 
   protected:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;

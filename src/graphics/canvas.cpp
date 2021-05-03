@@ -342,8 +342,28 @@ bool canvas::on_key_press_event(GdkEventKey* event)
     } else if (event->keyval == GDK_KEY_p) {
         _draw_potential_flag = !_draw_potential_flag;
         queue_draw();
+    } else if (event->keyval == GDK_KEY_s) {
+        save_to_png();
     }
     return false;
+}
+
+void canvas::save_to_png()
+{
+    if (const auto window = this->get_window()) {
+        if (const auto context = window->create_cairo_context()) {
+            if (const auto target = context->get_target()) {
+                std::time_t t = std::time(0);
+                if (std::tm* now = std::localtime(&t)) {
+                    char str[30];
+                    sprintf(str, "Elfield_%i%02i%02i_%02i%02i%02i.png",
+                            now->tm_year + 1900, now->tm_mon + 1, now->tm_mday,
+                            now->tm_hour, now->tm_min, now->tm_sec);
+                    target->write_to_png(str);
+                }
+            }
+        }
+    }
 }
 
 bool canvas::on_motion_notify_event(GdkEventMotion* event)
