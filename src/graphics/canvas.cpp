@@ -176,8 +176,8 @@ void canvas::_draw_potential(const Cairo::RefPtr<Cairo::Context>& ctx)
     const double delta = 10.0;
     Gtk::Allocation allocation = get_allocation();
     const auto sz = size(allocation.get_width(), allocation.get_height());
-    size_t x_count = sz.width / delta;
-    size_t y_count = sz.height / delta;
+    size_t x_count = sz.width / delta + 1;
+    size_t y_count = sz.height / delta + 1;
 
     const auto get_color = [&](double value) {
         const double min_e = -0.01;
@@ -201,10 +201,10 @@ void canvas::_draw_potential(const Cairo::RefPtr<Cairo::Context>& ctx)
     point coord(0.0, 0.0);
     for (size_t x_idx = 0; x_idx < x_count; ++x_idx) {
         for (size_t y_idx = 0; y_idx < y_count; ++y_idx) {
-            coord.y += delta;
             const auto e = _field.get_potential(coord);
             square sq(coord, get_color(e));
             sq.draw(ctx);
+            coord.y += delta;
         }
         coord.x += delta;
         coord.y = 0.0;
