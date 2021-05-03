@@ -26,6 +26,11 @@ Canvas::Canvas() : _field(_charges), _selected_circle(nullptr)
     property_can_focus() = true;
 }
 
+void Canvas::reinit_field()
+{
+    _init_lines();
+}
+
 void Canvas::_init_arrows(int width, int height)
 {
     _arrows.clear();
@@ -92,16 +97,19 @@ void Canvas::_init_lines()
             coord.y + sin(idx * 2 * M_PI / lines_per_charge) * line_delta);
     };
     for (const auto& charge : _charges.get_positive_charges()) {
+        if (charge->get_value() > 0.0) {
         for (size_t idx = 0; idx < lines_per_charge; ++idx) {
             _lines.emplace_back(
                 _make_line(get_begin(charge->get_coord(), idx), true, sz));
-        }
+        }}
     }
     for (const auto& charge : _charges.get_negative_charges()) {
+      if (charge->get_value() < 0.0) {
         for (size_t idx = 0; idx < lines_per_charge; ++idx) {
             _lines.emplace_back(
                 _make_line(get_begin(charge->get_coord(), idx), false, sz));
         }
+      }
     }
 }
 
@@ -222,37 +230,29 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
     if (event->type == GDK_BUTTON_PRESS) {
         const auto coord = point(event->x, event->y);
         if (event->button == 1) {
-            auto it = std::find_if(
-                _circles.begin(), _circles.end(),
-                [&coord](const auto& circle) { return circle.is_hint(coord); });
-            if (it != _circles.end()) {
-                _selected_circle = &(*it);
-            } else {
+            _selected_circle = get_hint_circle(coord);
+            if (!_selected_circle) {
                 _charges.emplace_back(charge::type::positive, coord, 1.0);
                 _circles.emplace_back(_charges.get_positive_charges().back());
-                _init_lines();
+                reinit_field();
                 queue_draw();
             }
         } else if (event->button == 3) {
             _charges.emplace_back(charge::type::negative, coord, -1.0);
             _circles.emplace_back(_charges.get_negative_charges().back());
-            _init_lines();
+            reinit_field();
             queue_draw();
         }
     } else if (event->type == GDK_DOUBLE_BUTTON_PRESS) {
         _selected_circle = nullptr;
         const auto coord = point(event->x, event->y);
         Gtk::Window* parent = dynamic_cast<Gtk::Window*>(this->get_toplevel());
-        if (parent) {
-            auto it = std::find_if(
-                _circles.begin(), _circles.end(),
-                [&coord](const auto& circle) { return circle.is_hint(coord); });
-            if (it != _circles.end()) {
-                auto props = charge_props(*parent, it->get_charge(), *this);
+        const auto* circle = get_hint_circle(coord);
+        if (parent && circle) {
+                auto props = charge_props(*parent, circle->get_charge(), *this);
                 props.run();
-                _init_lines();
+                reinit_field();
                 queue_draw();
-            }
         }
     }
     return false;
@@ -261,20 +261,19 @@ bool Canvas::on_button_press_event(GdkEventButton* event)
 bool Canvas::on_scroll_event(GdkEventScroll* scroll_event)
 {
     const auto coord = point(scroll_event->x, scroll_event->y);
-    auto it = std::find_if(
-        _circles.begin(), _circles.end(),
-        [&coord](const auto& circle) { return circle.is_hint(coord); });
-    if (it != _circles.end()) {
+    auto* hint_circle = get_hint_circle(coord);
+    auto chrg = hint_circle ? hint_circle->get_charge() : charge_ptr();
+    if (chrg) {
         if (scroll_event->direction == GdkScrollDirection::GDK_SCROLL_UP) {
-            auto charge = it->get_charge();
-            charge->set_value(charge->get_value() + 1.0);
-            _init_lines();
+            chrg->get_value() += 1.0;
+            _charges.validate(chrg);
+            reinit_field();
             queue_draw();
         } else if (scroll_event->direction ==
                    GdkScrollDirection::GDK_SCROLL_DOWN) {
-            auto charge = it->get_charge();
-            charge->set_value(charge->get_value() - 1.0);
-            _init_lines();
+            chrg->get_value() -= 1.0;
+            _charges.validate(chrg);
+            reinit_field();
             queue_draw();
         }
     }
@@ -329,7 +328,7 @@ bool Canvas::on_key_press_event(GdkEventKey* event)
             _charges.erase(it->get_charge());
             _circles.erase(it);
             _selected_circle = nullptr;
-            _init_lines();
+            reinit_field();
             queue_draw();
         }
     } else if (event->keyval == GDK_KEY_p) {
@@ -344,7 +343,7 @@ bool Canvas::on_motion_notify_event(GdkEventMotion* event)
     const auto coord = point(event->x, event->y);
     if (_selected_circle) {
         _selected_circle->move(coord);
-        _init_lines();
+        reinit_field();
     } else {
         for (auto& arr : _arrows) {
             arr.select(arr.is_hint(coord));
@@ -362,6 +361,16 @@ void Canvas::on_size_allocate(Gtk::Allocation& allocation)
     _init_arrows(allocation.get_width(), allocation.get_height());
 
     Gtk::DrawingArea::on_size_allocate(allocation);
+}
+
+circle* Canvas::get_hint_circle(const point& coord)
+{
+    auto it = std::find_if(_circles.begin(), _circles.end(),
+        [&coord](const auto& circle) { return circle.is_hint(coord); });
+    if (it != _circles.end()) {
+      return &(*it);
+    }
+    return nullptr;
 }
 
 } // namespace elfield

@@ -1,4 +1,5 @@
 #include "graphics/widgets/charge_props.hpp"
+#include "graphics/canvas.hpp"
 #include <gtkmm/arrow.h>
 #include <gtkmm/entry.h>
 #include <gtkmm/frame.h>
@@ -61,7 +62,7 @@ struct hbox {
 };
 
 charge_props::charge_props(Gtk::Window& parent, const charge_ptr& chrg,
-                           Gtk::DrawingArea& area)
+                           Gtk::Widget& area)
     : Gtk::Dialog("", parent,
                   Gtk::DIALOG_MODAL | Gtk::DIALOG_DESTROY_WITH_PARENT |
                       Gtk::DIALOG_USE_HEADER_BAR),
@@ -154,6 +155,8 @@ void charge_props::_update_entry_x()
     if (entry != nullptr) {
         entry->set_text(std::to_string(_charge->get_coord().x));
     }
+    auto& canvas = dynamic_cast<Canvas&>(_drawing_area.get());
+    canvas.reinit_field();
     _drawing_area.get().queue_draw();
 }
 
@@ -163,6 +166,8 @@ void charge_props::_update_entry_y()
     if (entry != nullptr) {
         entry->set_text(std::to_string(_charge->get_coord().y));
     }
+    auto& canvas = dynamic_cast<Canvas&>(_drawing_area.get());
+    canvas.reinit_field();
     _drawing_area.get().queue_draw();
 }
 
@@ -172,6 +177,8 @@ void charge_props::_update_entry_value()
     if (entry != nullptr) {
         entry->set_text(std::to_string(_charge->get_value()));
     }
+    auto& canvas = dynamic_cast<Canvas&>(_drawing_area.get());
+    canvas.reinit_field();
     _drawing_area.get().queue_draw();
 }
 

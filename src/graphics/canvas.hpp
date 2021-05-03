@@ -18,6 +18,7 @@ class Canvas : public Gtk::DrawingArea
   public:
     Canvas();
     virtual ~Canvas() = default;
+    void reinit_field();
 
   protected:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
@@ -37,6 +38,8 @@ class Canvas : public Gtk::DrawingArea
     void _draw_lines(const Cairo::RefPtr<Cairo::Context>& cr);
     void _draw_background(const Cairo::RefPtr<Cairo::Context>& cr);
     void _draw_potential(const Cairo::RefPtr<Cairo::Context>& cr);
+
+    circle* get_hint_circle(const point& coord);
 
     charges _charges;
     field _field;

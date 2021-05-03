@@ -12,7 +12,7 @@ class charge_props : public Gtk::Dialog
 {
   public:
     explicit charge_props(Gtk::Window& parent, const charge_ptr& charge,
-                          Gtk::DrawingArea& area);
+                          Gtk::Widget& area);
     ~charge_props() = default;
     using widgets_t = std::map<std::string, std::unique_ptr<Gtk::Widget>>;
 
@@ -34,6 +34,6 @@ class charge_props : public Gtk::Dialog
     charge_ptr _charge;
     charge_ptr _original;
     widgets_t _widgets;
-    std::reference_wrapper<Gtk::DrawingArea> _drawing_area;
+    std::reference_wrapper<Gtk::Widget> _drawing_area;
 };
 } // namespace elfield
