@@ -234,12 +234,20 @@ bool canvas::on_button_press_event(GdkEventButton* event)
             if (!_selected_circle) {
                 _charges.emplace_back(charge::type::positive, coord, 1.0);
                 _circles.emplace_back(_charges.get_positive_charges().back());
+                _circles.back().select(true);
+                for (auto& arr : _arrows) {
+                    arr.select(false);
+                }
                 reinit_field();
                 queue_draw();
             }
         } else if (event->button == 3) {
             _charges.emplace_back(charge::type::negative, coord, -1.0);
             _circles.emplace_back(_charges.get_negative_charges().back());
+            _circles.back().select(true);
+            for (auto& arr : _arrows) {
+                arr.select(false);
+            }
             reinit_field();
             queue_draw();
         }
