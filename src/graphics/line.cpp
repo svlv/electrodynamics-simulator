@@ -14,6 +14,7 @@ void line::draw(const Cairo::RefPtr<Cairo::Context>& ctx) const
         ctx->line_to(_points[idx].x, _points[idx].y);
     }
     ctx->stroke();
+    draw_chevrons(ctx);
 }
 
 } // namespace elfield

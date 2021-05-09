@@ -1,8 +1,9 @@
 #include "canvas.hpp"
 
-#include "arrow.hpp"
 #include "constants.hpp"
 #include "context_guard.hpp"
+#include "graphics/arrow.hpp"
+#include "graphics/chevron.hpp"
 #include "graphics/curve.hpp"
 #include "graphics/line.hpp"
 #include "graphics/square.hpp"
@@ -31,7 +32,6 @@ void canvas::reinit_field() { _init_lines(); }
 void canvas::_init_arrows(int width, int height)
 {
     _arrows.clear();
-
     auto pos = point(arrow_delta / 2.0, arrow_delta / 2.0);
 
     while (pos.x + arrow_delta / 2.0 < width) {
@@ -58,6 +58,7 @@ base_line_uptr canvas::_make_line(point pos, bool positive, const size& sz)
         }
         return nullptr;
     }();
+    double chevron_step = 0.0;
     for (size_t i = 0; i < 1000 && valid_position(); ++i) {
         auto end = positive
                        ? _charges.get_hint(pos, charge::type::negative, 10.0)
@@ -69,7 +70,8 @@ base_line_uptr canvas::_make_line(point pos, bool positive, const size& sz)
         }
         const auto delta = point(_field.get_cos(pos) * _line_delta,
                                  _field.get_sin(pos) * _line_delta);
-        if (fabs(delta.x) < 1.0 && fabs(delta.y) < 1.0) {
+        const auto mod = delta.module();
+        if (mod < 1.0) {
             break;
         }
         if (positive) {
@@ -78,6 +80,12 @@ base_line_uptr canvas::_make_line(point pos, bool positive, const size& sz)
             pos -= delta;
         }
         crv->add_point(pos);
+        chevron_step += mod;
+        if (chevron_step >= total_chevron_step) {
+            chevron_step = 0.0;
+            crv->add_chevron(
+                chevron(default_chevron_size, pos, _field.get_angle(pos)));
+        }
     }
     crv->fill();
     return crv;
@@ -259,6 +267,7 @@ bool canvas::on_button_press_event(GdkEventButton* event)
         if (parent && circle) {
             auto props = charge_props(*parent, circle->get_charge(), *this);
             props.run();
+            _charges.validate(circle->get_charge());
             reinit_field();
             queue_draw();
         }

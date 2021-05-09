@@ -3,7 +3,6 @@
 #include "graphics/point.hpp"
 #include "types.hpp"
 
-#include "point.hpp"
 #include <vector>
 
 #include <cairomm/context.h>

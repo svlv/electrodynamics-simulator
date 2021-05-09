@@ -1,6 +1,7 @@
 #pragma once
 
 #include "graphics/arrow.hpp"
+#include "graphics/chevron.hpp"
 #include <gdkmm/rgba.h>
 
 namespace elfield
@@ -19,6 +20,8 @@ const Gdk::RGBA highlight_arrow_color("#2398AB");
 const double line_delta = 10.0;
 const double arrow_delta = 50.0;
 const arrow::params default_arrow_size = {20.0, 28.0, 10.0, 20.0};
+const chevron::params default_chevron_size = {10.0, 0.52359};
+const double total_chevron_step = 50.0;
 const bool fill_arrow = true;
 const size_t lines_per_charge = 8;
 const double line_width = 5.0;
