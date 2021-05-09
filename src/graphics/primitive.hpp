@@ -15,7 +15,7 @@ class primitive
     virtual ~primitive() = default;
     void rotate(angle_t angle);
     void move(const point& coord);
-    virtual void draw(const Cairo::RefPtr<Cairo::Context>& context) const = 0;
+
   protected:
     point _coord;
     angle_t _angle;
@@ -23,4 +23,3 @@ class primitive
 };
 
 } // namespace elfield
-

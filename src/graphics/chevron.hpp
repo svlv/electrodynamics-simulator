@@ -13,6 +13,7 @@ class chevron : public primitive
         angle_t angle;
     };
     chevron() = default;
+    ~chevron() override = default;
     chevron(const params& size, const point& coord, angle_t angle);
     void draw(const Cairo::RefPtr<Cairo::Context>& context) const;
 

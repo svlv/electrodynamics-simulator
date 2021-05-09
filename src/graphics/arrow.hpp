@@ -1,16 +1,11 @@
 #pragma once
 
-#include "graphics/point.hpp"
-#include "types.hpp"
-
-#include <vector>
-
-#include <cairomm/context.h>
+#include "graphics/primitive.hpp"
 
 namespace elfield
 {
 
-class arrow
+class arrow : public primitive
 {
   public:
     struct params {
@@ -22,9 +17,8 @@ class arrow
 
     arrow(const params& size, const point& coord, angle_t angle);
     arrow() = default;
+    ~arrow() override = default;
 
-    void rotate(angle_t angle);
-    void move(const point& coord);
     void draw(const Cairo::RefPtr<Cairo::Context>& context, bool fill) const;
     bool is_hint(const point& coord);
 
@@ -34,12 +28,8 @@ class arrow
     const point& get_coord() const;
 
   private:
-    void _init();
+    std::vector<point> _init(const params& prms) const;
 
-    params _size;
-    point _coord;
-    angle_t _angle;
-    std::vector<point> _points;
     bool _is_selected;
 };
 

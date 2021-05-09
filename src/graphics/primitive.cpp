@@ -2,7 +2,9 @@
 namespace elfield
 {
 
-primitive::primitive(const point& coord, angle_t angle, std::vector<point>&& points) : _angle(0.0), _coord(0.0, 0.0), _points(std::move(points))
+primitive::primitive(const point& coord, angle_t angle,
+                     std::vector<point>&& points)
+    : _angle(0.0), _coord(0.0, 0.0), _points(std::move(points))
 {
     rotate(angle);
     move(coord);

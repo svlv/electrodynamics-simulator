@@ -5,46 +5,20 @@ namespace elfield
 {
 
 arrow::arrow(const params& size, const point& coord, angle_t angle)
-    : _size(size), _coord(0.0, 0.0), _angle(0.0), _is_selected(false)
+    : primitive(coord, angle, _init(size)), _is_selected(false)
 {
-    _init();
-    rotate(angle);
-    move(coord);
 }
 
-void arrow::_init()
+std::vector<point> arrow::_init(const params& _size) const
 {
-    _points = {{(_size.b + _size.d) / -2.0, _size.a / -2.0},
-               {(_size.b + _size.d) / -2.0, _size.a / 2.0},
-               {(_size.b - _size.d) / 2.0, _size.a / 2.0},
-               {(_size.b - _size.d) / 2.0, _size.a / 2.0 + _size.c},
-               {(_size.b + _size.d) / 2.0, 0},
-               {(_size.b - _size.d) / 2.0, (-1) * (_size.a / 2 + _size.c)},
-               {(_size.b - _size.d) / 2.0, _size.a / -2.0},
-               {(_size.b + _size.d) / -2.0, _size.a / -2.0}};
-}
-
-void arrow::rotate(angle_t angle)
-{
-    const auto coord = _coord;
-    move(point(0.0, 0.0));
-
-    const auto delta = angle - _angle;
-    for (auto& point : _points) {
-        point.rotate(delta);
-    }
-    _angle = angle;
-
-    move(coord);
-}
-
-void arrow::move(const point& coord)
-{
-    const auto delta = coord - _coord;
-    for (auto& point : _points) {
-        point.move(delta);
-    }
-    _coord = coord;
+    return {{(_size.b + _size.d) / -2.0, _size.a / -2.0},
+            {(_size.b + _size.d) / -2.0, _size.a / 2.0},
+            {(_size.b - _size.d) / 2.0, _size.a / 2.0},
+            {(_size.b - _size.d) / 2.0, _size.a / 2.0 + _size.c},
+            {(_size.b + _size.d) / 2.0, 0},
+            {(_size.b - _size.d) / 2.0, (-1) * (_size.a / 2 + _size.c)},
+            {(_size.b - _size.d) / 2.0, _size.a / -2.0},
+            {(_size.b + _size.d) / -2.0, _size.a / -2.0}};
 }
 
 void arrow::draw(const Cairo::RefPtr<Cairo::Context>& context, bool fill) const
