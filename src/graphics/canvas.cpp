@@ -117,20 +117,20 @@ void canvas::_init_lines(std::optional<Gtk::Allocation> allocation)
     // Gdk::Cairo::set_source_rgba(cr, "#e31200");
     for (const auto& charge : _charges.get_positive_charges()) {
         if (charge->get_value() > 0.0) {
-            for (size_t idx = 0; idx < charge->get_lines_count(); ++idx) {
-                _lines.emplace_back(
-                    _make_line(get_begin(charge->get_coord(), idx), true, sz));
+            auto begin = charge->get_next_line_begin();
+            while (begin.has_value()) {
+                _lines.emplace_back(_make_line(*begin, true, sz));
+                begin = charge->get_next_line_begin();
             }
         }
     }
     // Gdk::Cairo::set_source_rgba(cr, "#1d12ee");
     for (const auto& charge : _charges.get_negative_charges()) {
         if (charge->get_value() < 0.0) {
-            for (size_t idx = 0; idx < charge->get_lines_count(); ++idx) {
-                if (charge->get_lines_count(idx) == 0U) {
-                    _lines.emplace_back(_make_line(
-                        get_begin(charge->get_coord(), idx), false, sz));
-                }
+            auto begin = charge->get_next_line_begin();
+            while (begin.has_value()) {
+                _lines.emplace_back(_make_line(*begin, false, sz));
+                begin = charge->get_next_line_begin();
             }
         }
     }

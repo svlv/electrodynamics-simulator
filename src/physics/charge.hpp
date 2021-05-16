@@ -2,7 +2,8 @@
 
 #include "graphics/point.hpp"
 #include <memory>
-#include <vector>
+#include <set>
+#include <optional>
 
 namespace elfield
 {
@@ -24,13 +25,14 @@ class charge
 
     void add_line(angle_t angle);
     size_t get_lines_count() const;
-    size_t get_lines_count(size_t idx) const;
     void reinit_lines();
 
+    std::optional<point> get_next_line_begin();
   private:
     point _coord;
     double _value;
-    std::vector<size_t> _lines;
+
+    std::set<double> _lines;
 };
 
 using charge_ptr = std::shared_ptr<charge>;

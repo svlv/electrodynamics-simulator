@@ -1,11 +1,12 @@
 #include "charge.hpp"
+#include "constants.hpp"
 #include <cmath>
 #include <iostream>
 namespace elfield
 {
 
 charge::charge(const point& coord, double value)
-    : _coord(coord), _value(value), _lines(get_lines_count(), 0U)
+    : _coord(coord), _value(value)
 {
 }
 
@@ -22,17 +23,28 @@ void charge::set_value(double value) { _value = value; }
 
 void charge::add_line(angle_t angle)
 {
-    const size_t idx = angle / (2 * M_PI / get_lines_count());
-    std::cout << "idx=" << idx << " angle=" << angle * 57.32 << std::endl;
-    ++_lines[idx];
+    std::cout << " angle=" << angle * 57.32 << std::endl;
+    _lines.insert(angle);
 }
 
-size_t charge::get_lines_count(size_t idx) const
+std::optional<point> charge::get_next_line_begin()
 {
-    if (idx < _lines.size()) {
-        return _lines[idx];
+    if (_lines.size() >= get_lines_count()) {
+      return {};
     }
-    return 0U;
+    const auto get_delta = [&](){
+        const auto size = _lines.size();
+        if (size == 0U) {
+            return 2 * M_PI / get_lines_count();
+        } else if (_lines.size() == 1U) {
+            return (2*M_PI - *(_lines.begin())) / (get_lines_count() - size);
+        }
+        return (2 * M_PI - (*(_lines.rbegin()) - *(_lines.begin()))) / (get_lines_count() - size);
+    };
+    angle_t phi = (_lines.empty() ? 0.0 : *_lines.rbegin()) + get_delta();
+    _lines.insert(phi);
+    return point(_coord.x + std::cos(phi) * line_delta,
+                     _coord.y + std::sin(phi) * line_delta);
 }
 
 size_t charge::get_lines_count() const { return abs(_value) * 8U; }
@@ -40,7 +52,6 @@ size_t charge::get_lines_count() const { return abs(_value) * 8U; }
 void charge::reinit_lines()
 {
     _lines.clear();
-    _lines.resize(get_lines_count());
 }
 
 } // namespace elfield
