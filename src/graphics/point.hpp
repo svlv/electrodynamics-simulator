@@ -19,6 +19,7 @@ struct point {
     friend bool operator<(const point& lhs, const point& rhs);
 
     double module() const;
+    angle_t get_phi(const point& coord) const;
 
     double x;
     double y;

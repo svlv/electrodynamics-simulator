@@ -1,6 +1,6 @@
 #include "point.hpp"
 #include <cmath>
-
+#include <iostream>
 namespace elfield
 {
 
@@ -46,5 +46,20 @@ point operator-(const point& lhs, const point& rhs)
 bool operator<(const point& lhs, const point& rhs) { return lhs.x < rhs.x; }
 
 double point::module() const { return pow(pow(x, 2.0) + pow(y, 2.0), 0.5); }
+
+angle_t point::get_phi(const point& coord) const
+{
+    const auto is_null = [](const double val){
+      return val < 1E-3 && val > -1E-3;
+    };
+    auto p = coord - *this;
+    std::cout << p.x << " " << p.y << std::endl;
+    p.y *= (-1.);
+    if (is_null(p.x)) {
+        return p.y > 0.0 ? M_PI/2.0 : 3.0 * M_PI / 2.0;
+    } else if (p.x > 0.0) {
+        return p.y >= 0.0 ? std::atan(p.y / p.x) : std::atan(p.y / p.x) + 2 * M_PI; }
+    return std::atan(p.y / p.x) + M_PI;
+}
 
 } // namespace elfield

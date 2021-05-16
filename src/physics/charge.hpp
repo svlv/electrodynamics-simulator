@@ -2,6 +2,7 @@
 
 #include "graphics/point.hpp"
 #include <memory>
+#include <vector>
 
 namespace elfield
 {
@@ -18,12 +19,18 @@ class charge
     point& get_coord();
     void set_coord(const point& coord);
     double get_value() const;
-    double& get_value();
+double& get_value();
     void set_value(double value);
 
+    void add_line(angle_t angle);
+    size_t get_lines_count() const;
+    size_t get_lines_count(size_t idx) const;
+    void reinit_lines();
+
   private:
-    mutable point _coord;
-    mutable double _value;
+    point _coord;
+    double _value;
+    std::vector<size_t> _lines;
 };
 
 using charge_ptr = std::shared_ptr<charge>;

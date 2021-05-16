@@ -5,6 +5,7 @@
 #include <cairomm/context.h>
 #include <memory>
 #include <vector>
+#include "types.hpp"
 
 namespace elfield
 {
@@ -13,6 +14,7 @@ class base_line
   public:
     enum class type : uint8_t { line = 0, curve = 1 };
     explicit base_line(const point& begin);
+    explicit base_line(const point& begin, color_t color);
     virtual ~base_line() = default;
     base_line() = default;
     void add_point(const point& coord);
@@ -24,6 +26,7 @@ class base_line
     void draw_chevrons(const Cairo::RefPtr<Cairo::Context>& ctx) const;
     std::vector<point> _points;
     std::vector<chevron> _chevrons;
+    color_opt _color;
 };
 using base_line_uptr = std::unique_ptr<base_line>;
 } // namespace elfield

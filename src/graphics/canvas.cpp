@@ -54,7 +54,7 @@ base_line_uptr canvas::_make_line(point pos, bool positive, const size& sz)
         case base_line::type::line:
             return std::make_unique<line>(pos);
         case base_line::type::curve:
-            return std::make_unique<curve>(pos);
+            return std::make_unique<curve>(pos, positive ? Gdk::RGBA("#e31200") : Gdk::RGBA("#1d12ee"));
         }
         return nullptr;
     }();
@@ -65,6 +65,7 @@ base_line_uptr canvas::_make_line(point pos, bool positive, const size& sz)
                        : _charges.get_hint(pos, charge::type::positive, 10.0);
         if (end) {
             const auto& coord = end->get_coord();
+            end->add_line(coord.get_phi(pos));
             crv->add_point(coord);
             break;
         }
@@ -93,29 +94,43 @@ base_line_uptr canvas::_make_line(point pos, bool positive, const size& sz)
 
 void canvas::_init_lines(std::optional<Gtk::Allocation> allocation)
 {
+    //const auto guard = context_guard(cr);
     if (!allocation.has_value()) {
         allocation = get_allocation();
     }
     const auto sz = size(allocation->get_width(), allocation->get_height());
     _lines.clear();
+    for (const auto& charge : _charges.get_positive_charges()) {
+      charge->reinit_lines();
+    }
+    for (const auto& charge : _charges.get_negative_charges()) {
+      charge->reinit_lines();
+    }
+    std::cout << "=====================================\n";
     const auto get_begin = [](const point& coord, size_t idx) -> point {
+        const double delta = 2 * M_PI / lines_per_charge;
+        const double angle = idx * delta + delta / 2.0;
         return point(
-            coord.x + cos(idx * 2 * M_PI / lines_per_charge) * line_delta,
-            coord.y + sin(idx * 2 * M_PI / lines_per_charge) * line_delta);
+            coord.x + cos(angle) * line_delta,
+            coord.y + sin(angle) * line_delta);
     };
+    //Gdk::Cairo::set_source_rgba(cr, "#e31200");
     for (const auto& charge : _charges.get_positive_charges()) {
         if (charge->get_value() > 0.0) {
-            for (size_t idx = 0; idx < lines_per_charge; ++idx) {
+            for (size_t idx = 0; idx < charge->get_lines_count(); ++idx) {
                 _lines.emplace_back(
                     _make_line(get_begin(charge->get_coord(), idx), true, sz));
             }
         }
     }
+    //Gdk::Cairo::set_source_rgba(cr, "#1d12ee");
     for (const auto& charge : _charges.get_negative_charges()) {
         if (charge->get_value() < 0.0) {
-            for (size_t idx = 0; idx < lines_per_charge; ++idx) {
+            for (size_t idx = 0; idx < charge->get_lines_count(); ++idx) {
+                if (charge->get_lines_count(idx) == 0U) {
                 _lines.emplace_back(
                     _make_line(get_begin(charge->get_coord(), idx), false, sz));
+                }
             }
         }
     }

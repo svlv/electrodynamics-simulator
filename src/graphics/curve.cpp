@@ -1,4 +1,7 @@
 #include "graphics/curve.hpp"
+#include "graphics/context_guard.hpp"
+
+#include <gdkmm/general.h>
 
 namespace elfield
 {
@@ -20,6 +23,10 @@ void curve::draw(const Cairo::RefPtr<Cairo::Context>& ctx) const
     const auto sz = _points.size();
     if (sz < 4U) {
         return;
+    }
+    const auto guard = context_guard(ctx);
+    if (_color.has_value()) {
+        Gdk::Cairo::set_source_rgba(ctx, _color.value());
     }
     ctx->move_to(_points[0U].x, _points[0U].y);
     for (size_t idx = 0U; idx + 3U < sz; idx += 3U) {

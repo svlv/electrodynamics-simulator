@@ -3,7 +3,9 @@
 namespace elfield
 {
 
-base_line::base_line(const point& coord) : _points{coord} {}
+base_line::base_line(const point& begin) : _points{begin} {}
+
+base_line::base_line(const point& begin, color_t color) : _points{begin}, _color(color) {}
 
 void base_line::add_point(const point& coord) { _points.push_back(coord); }
 
