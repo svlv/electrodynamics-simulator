@@ -19,7 +19,7 @@ class charge
     point& get_coord();
     void set_coord(const point& coord);
     double get_value() const;
-double& get_value();
+    double& get_value();
     void set_value(double value);
 
     void add_line(angle_t angle);

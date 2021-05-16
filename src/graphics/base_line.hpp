@@ -2,10 +2,10 @@
 
 #include "graphics/chevron.hpp"
 #include "graphics/point.hpp"
+#include "types.hpp"
 #include <cairomm/context.h>
 #include <memory>
 #include <vector>
-#include "types.hpp"
 
 namespace elfield
 {
