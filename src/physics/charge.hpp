@@ -23,16 +23,9 @@ class charge
     double& get_value();
     void set_value(double value);
 
-    void add_line(angle_t angle);
-    size_t get_lines_count() const;
-    void reinit_lines();
-
-    std::optional<point> get_next_line_begin();
   private:
     point _coord;
     double _value;
-
-    std::set<double> _lines;
 };
 
 using charge_ptr = std::shared_ptr<charge>;
