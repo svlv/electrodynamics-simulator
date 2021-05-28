@@ -37,7 +37,6 @@ make
 | Key        | Action           |
 | ------------- |:-------------:|
 | `q`      | Quit simulator |
-| `s`      | Save to png file |
 | `c`      | Remove all charges |
 | `a`      | Toggle arrows |
 | `l`      | Toggle lines |
@@ -46,4 +45,5 @@ make
 | `t`      | Toggle straight line / bezier curve |
 | `j`      | Decrease line step for drawing |
 | `k`      | Increase line step for drawing |
-
+| `Ctrl+s` | Save to png file |
+| `Ctrl+c` | Copy to clipboard |
