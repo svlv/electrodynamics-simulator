@@ -3,6 +3,7 @@
 #include "context_guard.hpp"
 
 #include <gtkmm.h>
+
 namespace elfield
 {
 

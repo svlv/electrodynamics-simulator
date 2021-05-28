@@ -2,8 +2,8 @@
 
 #include "graphics/point.hpp"
 #include <memory>
-#include <set>
 #include <optional>
+#include <set>
 
 namespace elfield
 {

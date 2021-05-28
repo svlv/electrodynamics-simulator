@@ -5,8 +5,7 @@
 namespace elfield
 {
 
-charge::charge(const point& coord, double value)
-    : _coord(coord), _value(value)
+charge::charge(const point& coord, double value) : _coord(coord), _value(value)
 {
 }
 

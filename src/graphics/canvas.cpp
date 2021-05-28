@@ -11,7 +11,9 @@
 #include "point.hpp"
 #include "utils.hpp"
 
+#include <gdkmm/pixbuf.h>
 #include <gtkmm.h>
+#include <gtkmm/clipboard.h>
 #include <iostream>
 
 namespace elfield
@@ -98,26 +100,29 @@ void canvas::_init_lines(std::optional<Gtk::Allocation> allocation)
     }
     const auto sz = size(allocation->get_width(), allocation->get_height());
     _lines.clear();
-    const auto get_begin = [](const point& coord, size_t idx, size_t count) -> point {
+    const auto get_begin = [](const point& coord, size_t idx,
+                              size_t count) -> point {
         const double angle = idx * 2 * M_PI / count;
         return point(coord.x + cos(angle) * line_delta,
                      coord.y + sin(angle) * line_delta);
     };
     for (const auto& charge : _charges.get_positive_charges()) {
         if (charge->get_value() > 0.0) {
-            const size_t count = std::abs(charge->get_value()) * lines_per_charge;
+            const size_t count =
+                std::abs(charge->get_value()) * lines_per_charge;
             for (size_t idx = 0; idx < count; ++idx) {
-                _lines.emplace_back(
-                    _make_line(get_begin(charge->get_coord(), idx, count), true, sz));
+                _lines.emplace_back(_make_line(
+                    get_begin(charge->get_coord(), idx, count), true, sz));
             }
         }
     }
     for (const auto& charge : _charges.get_negative_charges()) {
         if (charge->get_value() < 0.0) {
-            const size_t count = std::abs(charge->get_value()) * lines_per_charge;
+            const size_t count =
+                std::abs(charge->get_value()) * lines_per_charge;
             for (size_t idx = 0; idx < count; ++idx) {
-                    _lines.emplace_back(_make_line(
-                        get_begin(charge->get_coord(), idx, count), false, sz));
+                _lines.emplace_back(_make_line(
+                    get_begin(charge->get_coord(), idx, count), false, sz));
             }
         }
     }
@@ -310,12 +315,6 @@ bool canvas::on_key_press_event(GdkEventKey* event)
     if (event->keyval == GDK_KEY_l) {
         _draw_lines_flag = !_draw_lines_flag;
         queue_draw();
-    } else if (event->keyval == GDK_KEY_c) {
-        _charges.clear();
-        _circles.clear();
-        _lines.clear();
-        _selected_circle = nullptr;
-        queue_draw();
     } else if (event->keyval == GDK_KEY_a) {
         _draw_arrows_flag = !_draw_arrows_flag;
         queue_draw();
@@ -353,10 +352,37 @@ bool canvas::on_key_press_event(GdkEventKey* event)
     } else if (event->keyval == GDK_KEY_p) {
         _draw_potential_flag = !_draw_potential_flag;
         queue_draw();
-    } else if (event->keyval == GDK_KEY_s) {
+    } else if (event->keyval == GDK_KEY_s &&
+               (event->state & GDK_CONTROL_MASK)) {
         save_to_png();
+    } else if (event->keyval == GDK_KEY_c &&
+               (event->state & GDK_CONTROL_MASK)) {
+        copy();
+    } else if (event->keyval == GDK_KEY_c) {
+        clear();
+        queue_draw();
     }
     return false;
+}
+
+void canvas::copy()
+{
+    if (const auto window = this->get_window()) {
+        if (auto clipboard = Gtk::Clipboard::get()) {
+            if (auto shot = Gdk::Pixbuf::create(
+                    window, 0, 0, window->get_width(), window->get_height())) {
+                clipboard->set_image(shot);
+            }
+        }
+    }
+}
+
+void canvas::clear()
+{
+    _charges.clear();
+    _circles.clear();
+    _lines.clear();
+    _selected_circle = nullptr;
 }
 
 void canvas::save_to_png()
