@@ -1,29 +1,37 @@
 #include "window.hpp"
+#include <iostream>
 
 namespace elfield
 {
 
-main_window::main_window()
+main_window::main_window() : _box(Gtk::Orientation::ORIENTATION_VERTICAL)
 {
     set_title("Elfield");
     set_size_request(200, 200);
     set_border_width(10);
 
-    // add_events(Gdk::KEY_PRESS_MASK);
+    _box.pack_start(_canvas);
+    _box.pack_start(_cli, Gtk::PACK_SHRINK);
 
-    add(_frame);
-    _frame.add(_canvas);
+    add(_box);
 
-    _frame.property_visible() = true;
     _canvas.property_visible() = true;
-    show_all_children();
+
+    _cli.hide();
+    _box.show();
 }
 
 bool main_window::on_key_press_event(GdkEventKey* event)
 {
-    if (event->keyval == GDK_KEY_q) {
+    if (event->keyval == GDK_KEY_q && !_cli.has_focus()) {
         close();
         return true;
+    } else if (event->keyval == GDK_KEY_colon) {
+        _cli.show();
+        _cli.grab_focus();
+    } else if (event->keyval == GDK_KEY_Escape) {
+        _cli.hide();
+        _canvas.grab_focus();
     }
     return Gtk::Window::on_key_press_event(event);
 }
