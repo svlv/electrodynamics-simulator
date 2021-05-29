@@ -28,10 +28,11 @@ bool main_window::on_key_press_event(GdkEventKey* event)
         close();
         return true;
     } else if (event->keyval == GDK_KEY_colon) {
-        _cli.show();
         _cli.grab_focus();
+        _cli.show();
     } else if (event->keyval == GDK_KEY_Escape) {
         _cli.hide();
+        _cli.set_text("");
         _canvas.grab_focus();
     }
     return Gtk::Window::on_key_press_event(event);
