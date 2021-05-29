@@ -4,7 +4,8 @@
 namespace elfield
 {
 
-main_window::main_window() : _box(Gtk::Orientation::ORIENTATION_VERTICAL)
+main_window::main_window()
+    : _box(Gtk::Orientation::ORIENTATION_VERTICAL), _cli(_canvas)
 {
     set_title("Elfield");
     set_size_request(200, 200);

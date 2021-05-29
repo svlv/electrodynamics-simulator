@@ -178,8 +178,14 @@ void canvas::_draw_charges(const Cairo::RefPtr<Cairo::Context>& ctx)
 void canvas::_draw_background(const Cairo::RefPtr<Cairo::Context>& ctx)
 {
     const auto guard = context_guard(ctx);
-    Gdk::Cairo::set_source_rgba(ctx, bg_color);
+    Gdk::Cairo::set_source_rgba(ctx, _settings.background_color);
     ctx->paint();
+}
+
+void canvas::set_background_color(Gdk::RGBA bg_color)
+{
+    _settings.background_color = bg_color;
+    queue_draw();
 }
 
 void canvas::_draw_potential(const Cairo::RefPtr<Cairo::Context>& ctx)

@@ -3,6 +3,7 @@
 #include "graphics/arrow.hpp"
 #include "graphics/base_line.hpp"
 #include "graphics/circle.hpp"
+#include "graphics/settings.hpp"
 #include "graphics/widgets/charge_props.hpp"
 #include "physics/charges.hpp"
 #include "physics/field.hpp"
@@ -23,6 +24,7 @@ class canvas : public Gtk::DrawingArea
     // copy canvas in clipboard
     void copy();
     void clear();
+    void set_background_color(Gdk::RGBA bg_color);
 
   protected:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
@@ -46,6 +48,7 @@ class canvas : public Gtk::DrawingArea
 
     circle* get_hint_circle(const point& coord);
 
+    settings _settings;
     charges _charges;
     field _field;
     bool _draw_lines_flag = false;
