@@ -1,7 +1,9 @@
 # Elfield - Electric Field Simulator<br />Easy to install - Easy to demonstrate
 Simple graphic electric field simulator written on C++ using GTK+.
 <br />
-<img src="https://github.com/svlv/elfield/blob/master/.screenshots/Elfield_20210530_120351.png" alt="Screenshot..." width="400" display="block" margin-left="auto" margin-right="auto"/>
+<p align="center">
+  <img src="https://github.com/svlv/elfield/blob/master/.screenshots/Elfield_20210530_120351.png" alt="Screenshot..." width="400"/>
+</p>
 
 # Build
 ```
@@ -35,7 +37,8 @@ make
 
 # Keybindings
 | Key        | Action           |
-| ------------- |:-------------:|
+| -----------|:----------------:|
+| `:`      | Begin command line interface |
 | `q`      | Quit simulator |
 | `c`      | Remove all charges |
 | `a`      | Toggle arrows |
@@ -47,3 +50,8 @@ make
 | `k`      | Increase line step for drawing |
 | `Ctrl+s` | Save to png file |
 | `Ctrl+c` | Copy to clipboard |
+
+# Command line interface
+| Command | Action | Example |
+|---------|--------|---------|
+|`set_background_color`| Set the given background color | `:set_background_color #ffffff` |
