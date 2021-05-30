@@ -10,6 +10,7 @@ class canvas;
 class history
 {
   public:
+    history();
     void add(const std::string& line);
     std::string prev();
     std::string next();
@@ -17,7 +18,7 @@ class history
 
   private:
     std::vector<std::string> _base;
-    size_t _pos = 0;
+    size_t _pos;
 };
 
 class command_line : public Gtk::Entry

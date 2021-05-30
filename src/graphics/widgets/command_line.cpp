@@ -6,6 +6,8 @@
 namespace elfield
 {
 
+  history::history() : _pos(0U) {}
+
 void history::add(const std::string& line)
 {
     _base.push_back(line);
