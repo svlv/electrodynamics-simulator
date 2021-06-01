@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gdkmm/rgba.h>
+#include <optional>
 
 namespace elfield
 {
